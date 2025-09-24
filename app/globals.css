@@ -1,12 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Tailwind directives MUST be at the top */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@custom-variant dark (&:is(.dark *));
-
 
 /* Custom CSS variables and theme */
 :root {
