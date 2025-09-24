@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { Menu } from "lucide-react"
+import { Menu } from "lucide-react";
 
 export function Header() {
   return (

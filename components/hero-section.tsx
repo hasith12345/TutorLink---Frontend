@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { ArrowRight, Users, BookOpen, Star } from "lucide-react"
+import { ArrowRight, Users, BookOpen, Star } from "lucide-react";
 
 export function HeroSection() {
   return (

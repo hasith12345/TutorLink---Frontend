@@ -1,7 +1,5 @@
-import { Button } from "@heroui/react"
-import { Input } from "@heroui/react";
-import { Card } from "@heroui/react"
-import { Search, MapPin, Clock, DollarSign } from "lucide-react"
+import { Button, Input, Card } from "@heroui/react";
+import { Search, MapPin, Clock, DollarSign } from "lucide-react";
 
 export function SearchSection() {
   return (
