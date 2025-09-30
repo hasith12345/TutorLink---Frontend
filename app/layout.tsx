@@ -13,12 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" crxlauncher="">
+    <html lang="en">
       <head>
         <link rel="icon" href="/favicon.png" />
       </head>
       <body>
-        
+
         <HeroUIProvider>
           {children}
         </HeroUIProvider>
