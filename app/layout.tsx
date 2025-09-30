@@ -18,6 +18,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.png" />
       </head>
       <body>
+        
         <HeroUIProvider>
           {children}
         </HeroUIProvider>
