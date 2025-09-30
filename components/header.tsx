@@ -39,10 +39,10 @@ export function Header() {
 
         <div className="flex items-center space-x-3">
           <Button variant="light" size="sm" className="font-medium hidden md:inline-flex rounded-xl px-3 py-5 hover:text-primary">
-            Sign In
+            <a href="/auth/login">Sign In</a>
           </Button>
           <Button color="primary" size="sm" className="hidden md:inline-flex bg-primary font-medium text-primary-foreground hover:bg-primary/90 rounded-xl border-primary py-5 px-3">
-            Get Started
+            <a href="/auth/signup">Get Started</a>
           </Button>
           <Button variant="ghost" size="sm" className="md:hidden">
             <Menu className="h-5 w-5" />
