@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { HeroUIProvider } from "@heroui/react";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "TutorLink - Smart Student-Tutor Connect",
@@ -18,10 +18,9 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.png" />
       </head>
       <body>
-
-        <HeroUIProvider>
+        <Providers>
           {children}
-        </HeroUIProvider>
+        </Providers>
       </body>
     </html>
   );
