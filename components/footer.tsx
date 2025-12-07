@@ -1,4 +1,5 @@
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <img src="/favicon.png" className="h-8 w-8 text-sidebar-primary" />
+              <Image src="/favicon.png" alt="TutorLink Logo" width={32} height={32} className="h-8 w-8 text-sidebar-primary" />
               <span className="text-xl font-bold">TutorLink</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">

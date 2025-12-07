@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
                 <GraduationCap className="w-9 h-9 text-white" />
               </div>
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4 text-balance">
-                Don't Worry, We've Got You
+                Don&apos;t Worry, We&apos;ve Got You
               </h2>
               <p className="text-white/90 text-lg text-pretty">
                 Reset your password and get back to learning in no time
@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
-                <span className="text-sm">We'll send you a secure reset link</span>
+                <span className="text-sm">We&apos;ll send you a secure reset link</span>
               </div>
               <div className="flex items-center gap-3 text-white/90">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
                   <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-foreground">Reset Password</h1>
                     <p className="text-muted-foreground">
-                      Enter your email address and we'll send you a link to reset your password
+                      Enter your email address and we&apos;ll send you a link to reset your password
                     </p>
                   </div>
 
@@ -140,13 +140,13 @@ export default function ForgotPasswordPage() {
                     <div className="space-y-2">
                       <h1 className="text-3xl font-bold text-foreground">Check Your Email</h1>
                       <p className="text-muted-foreground text-pretty">
-                        We've sent a password reset link to <strong className="text-foreground">{email}</strong>
+                        We&apos;ve sent a password reset link to <strong className="text-foreground">{email}</strong>
                       </p>
                     </div>
 
                     <div className="bg-muted/50 rounded-2xl p-6 space-y-3">
                       <p className="text-sm text-muted-foreground text-pretty">
-                        Didn't receive the email? Check your spam folder or try again with a different email address.
+                        Didn&apos;t receive the email? Check your spam folder or try again with a different email address.
                       </p>
                       <Button
                         type="button"

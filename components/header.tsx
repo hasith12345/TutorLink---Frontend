@@ -1,12 +1,13 @@
 import { Button } from "@heroui/react";
 import { Menu } from "lucide-react";
+import Image from "next/image";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-18 items-center justify-between px-4">
         <div className="flex items-center space-x-2">
-          <img src="/favicon.png" className="h-8 w-8 text-primary" />
+          <Image src="/favicon.png" alt="TutorLink Logo" width={32} height={32} className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold text-foreground">TutorLink</span>
         </div>
 

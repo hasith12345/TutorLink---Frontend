@@ -213,7 +213,7 @@ export default function ResetPasswordPage() {
 
                     <div className="bg-muted/50 rounded-2xl p-6 space-y-3">
                       <p className="text-sm text-muted-foreground text-pretty">
-                        For your security, we recommend using a unique password that you don't use on other websites.
+                        For your security, we recommend using a unique password that you don&apos;t use on other websites.
                       </p>
                     </div>
 
