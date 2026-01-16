@@ -65,10 +65,8 @@ export function AuthContainer() {
   // Handler for Sign Up button click - slide panel and show role selection
   const handleSignUpClick = useCallback(() => {
     setIsPanelSliding(true)
-    // Wait for panel to slide off before showing role selection
-    setTimeout(() => {
-      setSignupStep("role")
-    }, 450)
+    // Immediately change step to role for smooth transition
+    setSignupStep("role")
   }, [])
 
   // Handler for role selection
@@ -191,82 +189,86 @@ export function AuthContainer() {
 
             {/* Register Form / Signup Flow - Right Side */}
             <div 
-              className="h-full flex items-center justify-center"
+              className="h-full flex items-center justify-center relative"
               style={{
                 width: signupStep === "initial" ? "50%" : "100%",
-                transition: isReady ? "width 0.4s ease-in-out" : "none",
+                transition: isReady ? "width 0.5s ease-in-out" : "none",
               }}
             >
-              <div
-                className="w-full h-full flex items-center justify-center p-10"
-                style={{
-                  opacity: isLogin ? 0 : 1,
-                  transform: `translateZ(0) translateX(${isLogin ? 30 : 0}px) scale(${isLogin ? 0.95 : 1})`,
-                  pointerEvents: isLogin ? "none" : "auto",
-                  backfaceVisibility: "hidden",
-                  transition: getTransition("0.4s"),
-                }}
-              >
-                <AnimatePresence mode="wait">
-                  {signupStep === "initial" && (
-                    <motion.div
-                      key="initial"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full max-w-sm"
-                    >
+              <AnimatePresence mode="wait" initial={false}>
+                {/* Initial Register Form */}
+                {signupStep === "initial" && (
+                  <motion.div
+                    key="register"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: isLogin ? 0 : 1, x: isLogin ? 30 : 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="absolute inset-0 flex items-center justify-center p-10"
+                    style={{
+                      pointerEvents: isLogin || signupStep !== "initial" ? "none" : "auto",
+                    }}
+                  >
+                    <div className="w-full max-w-sm">
                       <RegisterForm onSignUpClick={handleSignUpClick} />
-                    </motion.div>
-                  )}
-                  {signupStep === "role" && (
-                    <motion.div
-                      key="role"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full h-full flex items-center justify-center"
-                    >
-                      <RoleSelection 
-                        onRoleSelect={handleRoleSelect}
-                        onBack={handleBackToInitial}
-                      />
-                    </motion.div>
-                  )}
-                  {signupStep === "student" && (
-                    <motion.div
-                      key="student"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full h-full flex items-center justify-center"
-                    >
-                      <StudentForm 
-                        onBack={handleBackToRoles}
-                        onSuccess={handleSignupSuccess}
-                      />
-                    </motion.div>
-                  )}
-                  {signupStep === "tutor" && (
-                    <motion.div
-                      key="tutor"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full h-full flex items-center justify-center"
-                    >
-                      <TutorForm 
-                        onBack={handleBackToRoles}
-                        onSuccess={handleSignupSuccess}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Role Selection */}
+                {signupStep === "role" && (
+                  <motion.div
+                    key="role"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ pointerEvents: "auto" }}
+                  >
+                    <RoleSelection 
+                      onRoleSelect={handleRoleSelect}
+                      onBack={handleBackToInitial}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Student Form */}
+                {signupStep === "student" && (
+                  <motion.div
+                    key="student"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ pointerEvents: "auto" }}
+                  >
+                    <StudentForm 
+                      onBack={handleBackToRoles}
+                      onSuccess={handleSignupSuccess}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Tutor Form */}
+                {signupStep === "tutor" && (
+                  <motion.div
+                    key="tutor"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ pointerEvents: "auto" }}
+                  >
+                    <TutorForm 
+                      onBack={handleBackToRoles}
+                      onSuccess={handleSignupSuccess}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
