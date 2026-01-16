@@ -2,17 +2,20 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { AnimatePresence, motion } from "framer-motion"
 import { LoginForm } from "./login-form"
 import { RegisterForm } from "./register-form"
-import { RoleSelectorModal } from "./role-selector-modal"
+import { RoleSelection } from "./role-selection"
+import { StudentForm } from "./student-form"
+import { TutorForm } from "./tutor-form"
 
 export function AuthContainer() {
   const router = useRouter()
   const pathname = usePathname()
   const [isLogin, setIsLogin] = useState(pathname === "/login" || pathname === "/")
   const [isAnimating, setIsAnimating] = useState(false)
-  const [showRoleModal, setShowRoleModal] = useState(false)
   const [isPanelSliding, setIsPanelSliding] = useState(false)
+  const [signupStep, setSignupStep] = useState<"initial" | "role" | "student" | "tutor">("initial")
   // Track if component is ready for animations (after first paint)
   const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -59,23 +62,35 @@ export function AuthContainer() {
     }, 600)
   }, [isAnimating, isLogin, router])
 
-  // Handler for Sign Up button click - slide panel and show modal
+  // Handler for Sign Up button click - slide panel and show role selection
   const handleSignUpClick = useCallback(() => {
     setIsPanelSliding(true)
-    // Wait for panel to slide off before showing modal
+    // Wait for panel to slide off before showing role selection
     setTimeout(() => {
-      setShowRoleModal(true)
-    }, 600)
+      setSignupStep("role")
+    }, 450)
   }, [])
 
-  // Close modal handler
-  const handleCloseModal = useCallback(() => {
-    setShowRoleModal(false)
-    // Slide panel back in
-    setTimeout(() => {
-      setIsPanelSliding(false)
-    }, 300)
+  // Handler for role selection
+  const handleRoleSelect = useCallback((role: "student" | "tutor") => {
+    setSignupStep(role)
   }, [])
+
+  // Handler to go back to role selection
+  const handleBackToRoles = useCallback(() => {
+    setSignupStep("role")
+  }, [])
+
+  // Handler to go back to initial signup
+  const handleBackToInitial = useCallback(() => {
+    setSignupStep("initial")
+    setIsPanelSliding(false)
+  }, [])
+
+  // Handler for successful signup
+  const handleSignupSuccess = useCallback(() => {
+    router.push("/complete-profile")
+  }, [router])
 
   // Transition style - only enabled after first paint
   const getTransition = (duration: string) => 
@@ -166,7 +181,7 @@ export function AuthContainer() {
               </div>
             </div>
 
-            {/* Register Form - Right Side */}
+            {/* Register Form / Signup Flow - Right Side */}
             <div className="w-1/2 h-full flex items-center justify-center">
               <div
                 className="w-full flex items-center justify-center p-10"
@@ -178,7 +193,63 @@ export function AuthContainer() {
                   transition: getTransition("0.4s"),
                 }}
               >
-                <RegisterForm onSignUpClick={handleSignUpClick} />
+                <div className="w-full max-w-sm">
+                  <AnimatePresence mode="wait">
+                    {signupStep === "initial" && (
+                      <motion.div
+                        key="initial"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <RegisterForm onSignUpClick={handleSignUpClick} />
+                      </motion.div>
+                    )}
+                    {signupStep === "role" && (
+                      <motion.div
+                        key="role"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <RoleSelection 
+                          onRoleSelect={handleRoleSelect}
+                          onBack={handleBackToInitial}
+                        />
+                      </motion.div>
+                    )}
+                    {signupStep === "student" && (
+                      <motion.div
+                        key="student"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <StudentForm 
+                          onBack={handleBackToRoles}
+                          onSuccess={handleSignupSuccess}
+                        />
+                      </motion.div>
+                    )}
+                    {signupStep === "tutor" && (
+                      <motion.div
+                        key="tutor"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <TutorForm 
+                          onBack={handleBackToRoles}
+                          onSuccess={handleSignupSuccess}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
           </div>
@@ -258,9 +329,6 @@ export function AuthContainer() {
           </div>
         </div>
       </div>
-
-      {/* Role Selector Modal */}
-      <RoleSelectorModal isOpen={showRoleModal} onClose={handleCloseModal} />
     </div>
   )
 }
