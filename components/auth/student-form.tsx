@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, User, BookOpen } from "lucide-react"
 
 interface StudentFormProps {
@@ -101,7 +102,23 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
   }
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full h-full grid grid-cols-1 md:grid-cols-[40%_60%]">
+      {/* Left Side - Image Panel */}
+      <div className="hidden md:flex relative bg-white items-center justify-center p-6">
+        <div className="relative w-full h-full flex items-center justify-center">
+          <Image
+            src="/Student.png"
+            alt="Student illustration"
+            width={400}
+            height={400}
+            className="object-contain"
+            priority
+          />
+        </div>
+      </div>
+
+      {/* Right Side - Content */}
+      <div className="w-full p-8 md:p-12 flex flex-col justify-center">
       {/* Header */}
       <div className="flex items-center mb-6">
         <button
@@ -235,6 +252,7 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
         and{" "}
         <a href="#" className="text-indigo-600 hover:underline">Privacy Policy</a>
       </p>
+      </div>
     </div>
   )
 }

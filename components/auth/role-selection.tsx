@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { ArrowLeft, GraduationCap, UserCheck } from "lucide-react"
 
 interface RoleSelectionProps {
@@ -9,7 +10,23 @@ interface RoleSelectionProps {
 
 export function RoleSelection({ onRoleSelect, onBack }: RoleSelectionProps) {
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full h-full grid grid-cols-1 md:grid-cols-[40%_60%]">
+      {/* Left Side - Image Panel */}
+      <div className="hidden md:flex relative bg-white items-center justify-center p-6">
+        <div className="relative w-full h-full flex items-center justify-center">
+          <Image
+            src="/Tutoring.png"
+            alt="Tutoring illustration"
+            width={400}
+            height={400}
+            className="object-contain"
+            priority
+          />
+        </div>
+      </div>
+
+      {/* Right Side - Content */}
+      <div className="w-full p-8 md:p-12 flex flex-col justify-center">
       {/* Header */}
       <div className="flex items-center mb-6">
         <button
@@ -85,6 +102,7 @@ export function RoleSelection({ onRoleSelect, onBack }: RoleSelectionProps) {
         <p className="text-slate-400 text-xs">
           You can always change your role later in settings
         </p>
+      </div>
       </div>
     </div>
   )

@@ -5,8 +5,8 @@ import { useRouter, usePathname } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import { LoginForm } from "./login-form"
 import { RegisterForm } from "./register-form"
-import { RoleSelection } from "./role-selection"
-import { StudentForm } from "./student-form"
+import { RoleSelection } from "../auth/role-selection"
+import { StudentForm } from "../auth/student-form"
 import { TutorForm } from "./tutor-form"
 
 export function AuthContainer() {
@@ -100,7 +100,7 @@ export function AuthContainer() {
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
       <div 
         ref={containerRef}
-        className="relative w-full max-w-4xl h-[550px] bg-white rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-[72rem] h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden"
         style={{
           transform: "translateZ(0)",
           backfaceVisibility: "hidden",
@@ -166,7 +166,15 @@ export function AuthContainer() {
         <div className="auth-desktop-view absolute inset-0">
           <div className="absolute inset-0 flex">
             {/* Login Form - Left Side */}
-            <div className="w-1/2 h-full flex items-center justify-center">
+            <div 
+              className="h-full flex items-center justify-center"
+              style={{
+                width: signupStep === "initial" ? "50%" : "0%",
+                opacity: signupStep === "initial" ? 1 : 0,
+                transition: isReady ? "width 0.4s ease-in-out, opacity 0.4s ease-in-out" : "none",
+                overflow: "hidden",
+              }}
+            >
               <div
                 className="w-full flex items-center justify-center p-10"
                 style={{
@@ -182,9 +190,15 @@ export function AuthContainer() {
             </div>
 
             {/* Register Form / Signup Flow - Right Side */}
-            <div className="w-1/2 h-full flex items-center justify-center">
+            <div 
+              className="h-full flex items-center justify-center"
+              style={{
+                width: signupStep === "initial" ? "50%" : "100%",
+                transition: isReady ? "width 0.4s ease-in-out" : "none",
+              }}
+            >
               <div
-                className="w-full flex items-center justify-center p-10"
+                className="w-full h-full flex items-center justify-center p-10"
                 style={{
                   opacity: isLogin ? 0 : 1,
                   transform: `translateZ(0) translateX(${isLogin ? 30 : 0}px) scale(${isLogin ? 0.95 : 1})`,
@@ -193,63 +207,65 @@ export function AuthContainer() {
                   transition: getTransition("0.4s"),
                 }}
               >
-                <div className="w-full max-w-sm">
-                  <AnimatePresence mode="wait">
-                    {signupStep === "initial" && (
-                      <motion.div
-                        key="initial"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <RegisterForm onSignUpClick={handleSignUpClick} />
-                      </motion.div>
-                    )}
-                    {signupStep === "role" && (
-                      <motion.div
-                        key="role"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <RoleSelection 
-                          onRoleSelect={handleRoleSelect}
-                          onBack={handleBackToInitial}
-                        />
-                      </motion.div>
-                    )}
-                    {signupStep === "student" && (
-                      <motion.div
-                        key="student"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <StudentForm 
-                          onBack={handleBackToRoles}
-                          onSuccess={handleSignupSuccess}
-                        />
-                      </motion.div>
-                    )}
-                    {signupStep === "tutor" && (
-                      <motion.div
-                        key="tutor"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <TutorForm 
-                          onBack={handleBackToRoles}
-                          onSuccess={handleSignupSuccess}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <AnimatePresence mode="wait">
+                  {signupStep === "initial" && (
+                    <motion.div
+                      key="initial"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full max-w-sm"
+                    >
+                      <RegisterForm onSignUpClick={handleSignUpClick} />
+                    </motion.div>
+                  )}
+                  {signupStep === "role" && (
+                    <motion.div
+                      key="role"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      <RoleSelection 
+                        onRoleSelect={handleRoleSelect}
+                        onBack={handleBackToInitial}
+                      />
+                    </motion.div>
+                  )}
+                  {signupStep === "student" && (
+                    <motion.div
+                      key="student"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      <StudentForm 
+                        onBack={handleBackToRoles}
+                        onSuccess={handleSignupSuccess}
+                      />
+                    </motion.div>
+                  )}
+                  {signupStep === "tutor" && (
+                    <motion.div
+                      key="tutor"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      <TutorForm 
+                        onBack={handleBackToRoles}
+                        onSuccess={handleSignupSuccess}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
@@ -259,7 +275,7 @@ export function AuthContainer() {
             className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center z-10"
             style={{
               transform: `translateZ(0) translateX(${
-                isPanelSliding ? "-100%" : isLogin ? "100%" : "0%"
+                isPanelSliding || signupStep !== "initial" ? "-100%" : isLogin ? "100%" : "0%"
               })`,
               backfaceVisibility: "hidden",
               transition: isReady ? "transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
