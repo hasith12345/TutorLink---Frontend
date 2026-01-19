@@ -14,10 +14,12 @@ export function TutorForm({ onBack, onSuccess }: TutorFormProps) {
     fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     subjects: "",
     yearsExperience: ""
   })
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -48,6 +50,12 @@ export function TutorForm({ onBack, onSuccess }: TutorFormProps) {
       newErrors.password = "Password is required"
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters"
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password"
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
     }
 
     if (!formData.subjects.trim()) {
@@ -220,6 +228,33 @@ export function TutorForm({ onBack, onSuccess }: TutorFormProps) {
           </div>
           {errors.password && (
             <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+          )}
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 transition-all text-slate-800 placeholder:text-slate-400 ${
+                errors.confirmPassword ? 'focus:ring-red-500' : 'focus:ring-purple-500'
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
           )}
         </div>
 
