@@ -54,13 +54,17 @@ export function AuthContainer() {
   const handleToggle = useCallback((toLogin: boolean) => {
     if (isAnimating || isLogin === toLogin) return
     setIsAnimating(true)
-    setIsLogin(toLogin)
+    
+    // Delay state change slightly to ensure smooth animation start
+    requestAnimationFrame(() => {
+      setIsLogin(toLogin)
+    })
 
     // Update URL after animation completes
     setTimeout(() => {
       router.push(toLogin ? "/login" : "/register", { scroll: false })
       setIsAnimating(false)
-    }, 600)
+    }, 700)
   }, [isAnimating, isLogin, router])
 
   // Handler for Sign Up button click - slide panel and show role selection
@@ -118,7 +122,8 @@ export function AuthContainer() {
               transform: `translateZ(0) translateX(${isLogin ? 0 : -20}px)`,
               pointerEvents: isLogin ? "auto" : "none",
               backfaceVisibility: "hidden",
-              transition: getTransition("0.3s"),
+              willChange: isAnimating ? "opacity, transform" : "auto",
+              transition: getTransition("0.4s"),
             }}
           >
             <LoginForm />
@@ -143,7 +148,8 @@ export function AuthContainer() {
               transform: `translateZ(0) translateX(${isLogin ? 20 : 0}px)`,
               pointerEvents: isLogin ? "none" : "auto",
               backfaceVisibility: "hidden",
-              transition: getTransition("0.3s"),
+              willChange: isAnimating ? "opacity, transform" : "auto",
+              transition: getTransition("0.4s"),
             }}
           >
             <RegisterForm onSignUpClick={handleSignUpClick} />
@@ -171,8 +177,9 @@ export function AuthContainer() {
               style={{
                 width: signupStep === "initial" ? "50%" : "0%",
                 opacity: signupStep === "initial" ? 1 : 0,
-                transition: isReady ? "width 0.4s ease-in-out, opacity 0.4s ease-in-out" : "none",
+                transition: isReady ? "width 0.5s ease-in-out, opacity 0.5s ease-in-out" : "none",
                 overflow: "hidden",
+                willChange: signupStep !== "initial" ? "width, opacity" : "auto",
               }}
             >
               <div
@@ -182,7 +189,8 @@ export function AuthContainer() {
                   transform: `translateZ(0) translateX(${isLogin ? 0 : -30}px) scale(${isLogin ? 1 : 0.95})`,
                   pointerEvents: isLogin ? "auto" : "none",
                   backfaceVisibility: "hidden",
-                  transition: getTransition("0.4s"),
+                  willChange: isAnimating ? "opacity, transform" : "auto",
+                  transition: getTransition("0.5s"),
                 }}
               >
                 <LoginForm />
@@ -195,6 +203,7 @@ export function AuthContainer() {
               style={{
                 width: signupStep === "initial" ? "50%" : "100%",
                 transition: isReady ? "width 0.5s ease-in-out" : "none",
+                willChange: signupStep !== "initial" ? "width" : "auto",
               }}
             >
               <AnimatePresence mode="wait" initial={false}>
