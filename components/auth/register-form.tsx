@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react"
 
 interface RegisterFormProps {
-  onSignUpClick?: () => void
+  onSignUpClick?: (userData: { fullName: string; email: string; password: string }) => void
 }
 
 export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
@@ -16,15 +16,53 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!name.trim()) {
+      newErrors.name = "Full name is required"
+    } else if (name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters"
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password"
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Trigger role selector modal
+    
+    if (!validateForm()) {
+      return
+    }
+
+    // Trigger role selector with user data
     if (onSignUpClick) {
-      onSignUpClick()
-    } else {
-      // Fallback
-      console.log("Register:", { name, email, password })
+      onSignUpClick({
+        fullName: name.trim(),
+        email: email.trim(),
+        password: password
+      })
     }
   }
 
@@ -81,10 +119,18 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
             type="text"
             placeholder="Full Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
+            onChange={(e) => {
+              setName(e.target.value)
+              setErrors(prev => ({ ...prev, name: "" }))
+            }}
+            className={`w-full pl-11 pr-4 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
+              errors.name ? "ring-2 ring-red-500" : ""
+            }`}
             required
           />
+          {errors.name && (
+            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+          )}
         </div>
 
         <div className="relative">
@@ -93,10 +139,18 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setErrors(prev => ({ ...prev, email: "" }))
+            }}
+            className={`w-full pl-11 pr-4 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
+              errors.email ? "ring-2 ring-red-500" : ""
+            }`}
             required
           />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+          )}
         </div>
 
         <div className="relative">
@@ -105,8 +159,13 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setErrors(prev => ({ ...prev, password: "" }))
+            }}
+            className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
+              errors.password ? "ring-2 ring-red-500" : ""
+            }`}
             required
           />
           <button
@@ -116,6 +175,9 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+          )}
         </div>
 
         <div className="relative">
@@ -124,8 +186,13 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
+            onChange={(e) => {
+              setConfirmPassword(e.target.value)
+              setErrors(prev => ({ ...prev, confirmPassword: "" }))
+            }}
+            className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
+              errors.confirmPassword ? "ring-2 ring-red-500" : ""
+            }`}
             required
           />
           <button
@@ -135,6 +202,9 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
           >
             {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
+          {errors.confirmPassword && (
+            <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>
+          )}
         </div>
 
         <button

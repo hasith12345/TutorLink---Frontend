@@ -6,8 +6,8 @@ import { AnimatePresence, motion } from "framer-motion"
 import { LoginForm } from "./login-form"
 import { RegisterForm } from "./register-form"
 import { RoleSelection } from "../auth/role-selection"
-import { StudentForm } from "../auth/student-form"
-import { TutorForm } from "./tutor-form"
+import { StudentDetails } from "../auth/student-details"
+import { TutorDetails } from "./tutor-details"
 
 export function AuthContainer() {
   const router = useRouter()
@@ -15,7 +15,8 @@ export function AuthContainer() {
   const [isLogin, setIsLogin] = useState(pathname === "/login" || pathname === "/")
   const [isAnimating, setIsAnimating] = useState(false)
   const [isPanelSliding, setIsPanelSliding] = useState(false)
-  const [signupStep, setSignupStep] = useState<"initial" | "role" | "student" | "tutor">("initial")
+  const [signupStep, setSignupStep] = useState<"initial" | "role" | "student-details" | "tutor-details">("initial")
+  const [userData, setUserData] = useState<{ fullName: string; email: string; password: string } | null>(null)
   // Track if component is ready for animations (after first paint)
   const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -63,7 +64,8 @@ export function AuthContainer() {
   }, [isAnimating, isLogin, router])
 
   // Handler for Sign Up button click - slide panel and show role selection
-  const handleSignUpClick = useCallback(() => {
+  const handleSignUpClick = useCallback((data: { fullName: string; email: string; password: string }) => {
+    setUserData(data)
     setIsPanelSliding(true)
     // Immediately change step to role for smooth transition
     setSignupStep("role")
@@ -71,7 +73,7 @@ export function AuthContainer() {
 
   // Handler for role selection
   const handleRoleSelect = useCallback((role: "student" | "tutor") => {
-    setSignupStep(role)
+    setSignupStep(role === "student" ? "student-details" : "tutor-details")
   }, [])
 
   // Handler to go back to role selection
@@ -233,10 +235,10 @@ export function AuthContainer() {
                   </motion.div>
                 )}
 
-                {/* Student Form */}
-                {signupStep === "student" && (
+                {/* Student Details Form */}
+                {signupStep === "student-details" && userData && (
                   <motion.div
-                    key="student"
+                    key="student-details"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
@@ -244,17 +246,18 @@ export function AuthContainer() {
                     className="absolute inset-0 flex items-center justify-center"
                     style={{ pointerEvents: "auto" }}
                   >
-                    <StudentForm 
+                    <StudentDetails 
+                      userData={userData}
                       onBack={handleBackToRoles}
                       onSuccess={handleSignupSuccess}
                     />
                   </motion.div>
                 )}
 
-                {/* Tutor Form */}
-                {signupStep === "tutor" && (
+                {/* Tutor Details Form */}
+                {signupStep === "tutor-details" && userData && (
                   <motion.div
-                    key="tutor"
+                    key="tutor-details"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
@@ -262,7 +265,8 @@ export function AuthContainer() {
                     className="absolute inset-0 flex items-center justify-center"
                     style={{ pointerEvents: "auto" }}
                   >
-                    <TutorForm 
+                    <TutorDetails 
+                      userData={userData}
                       onBack={handleBackToRoles}
                       onSuccess={handleSignupSuccess}
                     />
