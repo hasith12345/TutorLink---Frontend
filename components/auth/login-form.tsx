@@ -106,6 +106,9 @@ export function LoginForm() {
         >
           Sign In
         </button>
+        <p className="text-black/50 text-xs max-w-xs mx-auto leading-relaxed">
+            By signing in, you agree to our <span className="underline cursor-pointer hover:text-blue-500">Terms</span> & <span className="underline cursor-pointer hover:text-blue-500">Privacy Policy</span>
+        </p>
       </form>
     </div>
   )
