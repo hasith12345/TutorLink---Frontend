@@ -1,37 +1,530 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TutorLink - Smart Student-Tutor Platform (Frontend)
 
-## Getting Started
+A modern, intuitive platform connecting students with qualified tutors. Built with Next.js, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Authentication Flow](#authentication-flow)
+- [Pages & Components](#pages--components)
+- [Signup Flow Components](#signup-flow-components)
+- [Features](#features)
+- [Design Decisions](#design-decisions)
+- [Getting Started](#getting-started)
+
+---
+
+## 🎯 Overview
+
+TutorLink is a comprehensive platform that facilitates connections between students seeking educational support and experienced tutors. The platform features a streamlined **3-step signup flow** with role-specific profile completion for both students and tutors.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** Custom components built with shadcn/ui
+- **Icons:** Lucide React
+- **Animations:** Framer Motion
+- **Form Validation:** Client-side validation with real-time feedback
+- **Package Manager:** pnpm
+
+---
+
+## 📁 Project Structure
+
+```
+TutorLink - Frontend/
+├── app/
+│   ├── globals.css           # Global styles
+│   ├── layout.tsx            # Root layout
+│   ├── page.tsx              # Home page
+│   ├── login/
+│   │   └── page.tsx          # Login page
+│   └── register/
+│       └── page.tsx          # Registration page
+├── components/
+│   ├── auth/
+│   │   ├── auth-container.tsx    # Main auth flow container
+│   │   ├── register-form.tsx     # Step 1: Basic credentials
+│   │   ├── role-selection.tsx    # Step 2: Role selection
+│   │   ├── student-details.tsx   # Step 3a: Student profile
+│   │   └── tutor-details.tsx     # Step 3b: Tutor profile
+│   ├── ui/                   # Reusable UI components
+│   └── theme-provider.tsx    # Theme management
+├── lib/
+│   └── utils.ts              # Utility functions
+└── public/
+    ├── Student.png           # Student illustration
+    └── Tutor.png             # Tutor illustration
 ```
 
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔐 Authentication Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Complete Signup Journey
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The platform implements a **3-step progressive disclosure signup flow** designed for clarity, reduced cognitive load, and improved user experience.
 
-## Learn More
+### **Step 1: Initial Registration** (`register-form.tsx`)
 
-To learn more about Next.js, take a look at the following resources:
+**Purpose:** Collect basic user credentials
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Fields:**
+- **Full Name** - Required, minimum 2 characters
+- **Email Address** - Required, validated email format
+- **Password** - Required, minimum 8 characters, visibility toggle
+- **Confirm Password** - Required, must match password
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Features:**
+- Real-time validation with error messages
+- Password visibility toggle (eye icon)
+- Visual feedback for validation states
+- "Already have an account?" login link
 
-## Deploy on Vercel
+**User Flow:**
+1. User enters credentials
+2. Client-side validation checks all fields
+3. On valid submission, data is passed to auth container
+4. Flow proceeds to Step 2
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **Step 2: Role Selection** (`role-selection.tsx`)
+
+**Purpose:** Allow users to choose their role in the platform
+
+**Options:**
+- **Student** - For learners seeking tutoring help
+- **Tutor** - For educators offering teaching services
+
+**Features:**
+- Visual card-based selection
+- Hover effects with smooth transitions
+- Back button to return to credentials form
+- Role-specific illustrations (Student.png / Tutor.png)
+
+**User Flow:**
+1. User sees two role cards
+2. Clicks on their preferred role
+3. Selection triggers navigation to role-specific details page
+
+---
+
+### **Step 3a: Student Details** (`student-details.tsx`)
+
+**Purpose:** Collect student-specific profile information
+
+**Layout:**
+- **Fixed Header:** "Complete Your Student Profile" with subtitle
+- **Scrollable Form Content:** All form fields with proper spacing
+- **Fixed Footer:** Submit button ("Create Student Account")
+
+**Fields:**
+
+1. **Education Level** (Required)
+   - Dropdown selection with right padding
+   - Options: School, University, Professional
+   
+2. **Grade** (Conditionally Required)
+   - Only appears when Education Level is "School"
+   - Options: Grade 1-13
+   
+3. **Subjects** (Required, minimum 1)
+   - **Toggle-based selection** (no text input)
+   - 15 subjects: Math, Science, English, History, Geography, Physics, Chemistry, Biology, Economics, Business Studies, ICT, Art, Music, Physical Education, Languages
+   - Selected subjects show indigo background with white text
+   - X icon appears on selected items for deselection
+   - Visual feedback on hover
+   
+4. **Learning Mode** (Required)
+   - Three-option grid: Online, In-Person, Both
+   - Selected mode shows indigo background
+
+**Features:**
+- Sticky header/footer with scrollable middle content
+- Real-time validation
+- Conditional grade field rendering
+- Toggle-based subject selection with visual states
+- Error messages for each field
+- Loading state on submission
+- Back button to return to role selection
+
+**API Integration:**
+- Submits to `/api/auth/signup` with all collected data
+- Payload includes: fullName, email, password, role: "student", educationLevel, grade (if school), subjects, learningMode
+
+---
+
+### **Step 3b: Tutor Details** (`tutor-details.tsx`)
+
+**Purpose:** Collect tutor-specific profile information
+
+**Layout:**
+- **Fixed Header:** "Complete Your Tutor Profile" with subtitle
+- **Scrollable Form Content:** All form fields
+- **Fixed Footer:** Submit button ("Create Tutor Account")
+
+**Fields:**
+
+1. **Subjects You Can Teach** (Required, minimum 1)
+   - **Toggle-based selection** (no text input)
+   - Same 15 subjects as student form
+   - Selected subjects show purple background with white text
+   - X icon for deselection
+   - Visual hover feedback
+   
+2. **Education Levels You Can Teach** (Required, minimum 1)
+   - Multi-select grid
+   - Options: School, University, Professional
+   - Selected levels show purple background
+   
+3. **Teaching Experience** (Required)
+   - Dropdown with right padding
+   - Options: Less than 1 year, 1-2 years, 3-5 years, 5-10 years, 10+ years
+
+**Features:**
+- Sticky header/footer with scrollable content
+- Real-time validation
+- Toggle-based subject selection (matches student UX)
+- Multi-select grid for education levels
+- Error messages for invalid states
+- Loading state during submission
+- Back button to return to role selection
+
+**API Integration:**
+- Submits to `/api/auth/signup`
+- Payload includes: fullName, email, password, role: "tutor", subjects, educationLevels, experience
+
+---
+
+## 🧩 Pages & Components
+
+### Pages
+
+#### **Home Page** (`app/page.tsx`)
+- Landing page of the application
+- Entry point for users
+
+#### **Login Page** (`app/login/page.tsx`)
+- User authentication page
+- Links to registration for new users
+
+#### **Register Page** (`app/register/page.tsx`)
+- Hosts the complete signup flow
+- Uses `auth-container.tsx` to manage flow
+
+---
+
+### Signup Flow Components
+
+#### **Auth Container** (`auth-container.tsx`)
+
+**Purpose:** Orchestrates the entire authentication flow
+
+**State Management:**
+- `signupStep`: Tracks current step ("initial" | "role" | "student-details" | "tutor-details")
+- `userData`: Persists user data across steps (fullName, email, password)
+- `selectedRole`: Stores chosen role ("student" | "tutor")
+
+**Functions:**
+- `handleSignUpClick`: Receives credentials from Step 1, stores in state, advances to Step 2
+- `handleRoleSelect`: Receives role choice, advances to appropriate Step 3 page
+- `goBack`: Navigation handler for back buttons
+
+**Features:**
+- Split-panel layout (illustration left, form right)
+- Framer Motion animations for smooth transitions
+- Responsive design (stacked on mobile)
+- Role-specific theme colors (indigo for students, purple for tutors)
+
+---
+
+#### **Register Form** (`register-form.tsx`)
+
+**Validation Functions:**
+- `validateEmail`: RFC-compliant email validation
+- `validatePassword`: Minimum 8 characters
+- `validateConfirmPassword`: Must match password
+- `validateFullName`: Minimum 2 characters
+
+**Error States:**
+- Individual error messages for each field
+- Real-time validation feedback
+- Visual error indicators
+
+---
+
+#### **Role Selection** (`role-selection.tsx`)
+
+**Features:**
+- Card-based UI with hover effects
+- Role-specific icons and descriptions
+- Back button with smooth transitions
+- Responsive grid layout
+
+---
+
+#### **Student Details** (`student-details.tsx`)
+
+**Form Architecture:**
+- Flexbox layout with sticky header/footer
+- `flex-shrink-0` for fixed elements
+- `overflow-y-auto` with `min-h-0` for scrollable content
+
+**Subject Selection Pattern:**
+```typescript
+const toggleSubject = (subject: string) => {
+  if (subjects.includes(subject)) {
+    setSubjects(subjects.filter(s => s !== subject));
+  } else {
+    setSubjects([...subjects, subject]);
+  }
+};
+```
+
+**Conditional Grade Rendering:**
+```typescript
+{educationLevel === "school" && (
+  <div className="space-y-2">
+    <Label>Grade *</Label>
+    <select value={grade} onChange={(e) => setGrade(e.target.value)}>
+      {/* Grade options */}
+    </select>
+  </div>
+)}
+```
+
+---
+
+#### **Tutor Details** (`tutor-details.tsx`)
+
+**Education Level Multi-Select:**
+```typescript
+const toggleEducationLevel = (level: string) => {
+  if (educationLevels.includes(level)) {
+    setEducationLevels(educationLevels.filter(l => l !== level));
+  } else {
+    setEducationLevels([...educationLevels, level]);
+  }
+};
+```
+
+**Theme:** Purple accent color (`bg-purple-600`, `text-purple-600`)
+
+---
+
+## ✨ Features
+
+### User Experience
+
+1. **Progressive Disclosure**
+   - Information collected in logical steps
+   - Reduces initial form complexity
+   - Lower cognitive load for users
+
+2. **Real-Time Validation**
+   - Immediate feedback on field errors
+   - Granular error messages
+   - Visual indicators for validation states
+
+3. **Smooth Animations**
+   - Framer Motion transitions between steps
+   - Hover effects on interactive elements
+   - Loading states during submissions
+
+4. **Responsive Design**
+   - Mobile-first approach
+   - Adaptive layouts for all screen sizes
+   - Touch-friendly interactive elements
+
+5. **Accessibility**
+   - Semantic HTML structure
+   - Proper label associations
+   - Keyboard navigation support
+
+### Technical Features
+
+1. **Type Safety**
+   - Full TypeScript implementation
+   - Strict type checking
+   - Interface definitions for all data structures
+
+2. **Component Reusability**
+   - Shared UI components library
+   - Consistent design system
+   - DRY principle adherence
+
+3. **State Management**
+   - React hooks for local state
+   - Prop drilling for data flow
+   - State persistence across steps
+
+4. **Form Handling**
+   - Controlled components
+   - Validation logic separation
+   - Error state management
+
+---
+
+## 🎨 Design Decisions
+
+### Why 3-Step Signup?
+
+1. **Reduced Cognitive Load:** Breaking the signup into steps prevents overwhelming users
+2. **Better UX:** Users see relevant fields based on their role
+3. **Higher Completion Rates:** Progressive disclosure improves form completion
+4. **Flexibility:** Easy to add/modify role-specific requirements
+
+### Toggle-Based Subject Selection
+
+**Previous Design:** Text input + "Add" button + separate display area
+
+**Current Design:** Direct toggle buttons with visual feedback
+
+**Benefits:**
+- Faster selection process
+- Visual confirmation of selections
+- Fewer UI interactions required
+- Cleaner interface (no redundant displays)
+- Consistent with modern UI patterns
+
+### Sticky Header/Footer Layout
+
+**Implementation:**
+```css
+/* Parent container */
+flex flex-col overflow-hidden
+
+/* Header/Footer */
+flex-shrink-0
+
+/* Scrollable content */
+flex-1 overflow-y-auto min-h-0
+```
+
+**Why:**
+- Always-visible context (header shows current step)
+- Always-accessible action (footer submit button)
+- Scrollable content prevents cut-off on small screens
+
+### Color Theming
+
+- **Students:** Indigo (`#4F46E5`) - Represents learning and growth
+- **Tutors:** Purple (`#9333EA`) - Represents wisdom and expertise
+- **Consistent Application:** Used in buttons, selected states, and accents
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ installed
+- pnpm package manager
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Navigate to frontend directory
+cd "TutorLink - Frontend"
+
+# Install dependencies
+pnpm install
+```
+
+### Development
+
+```bash
+# Start development server
+pnpm dev
+
+# Open browser
+Visit http://localhost:3000
+```
+
+### Build
+
+```bash
+# Create production build
+pnpm build
+
+# Start production server
+pnpm start
+```
+
+---
+
+## 📝 API Integration
+
+### Registration Endpoint
+
+**Endpoint:** `POST /api/auth/signup`
+
+**Student Payload:**
+```json
+{
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "password": "securepass123",
+  "role": "student",
+  "educationLevel": "school",
+  "grade": "Grade 10",
+  "subjects": ["Math", "Physics", "Chemistry"],
+  "learningMode": "online"
+}
+```
+
+**Tutor Payload:**
+```json
+{
+  "fullName": "Jane Smith",
+  "email": "jane@example.com",
+  "password": "securepass123",
+  "role": "tutor",
+  "subjects": ["Math", "Physics"],
+  "educationLevels": ["school", "university"],
+  "experience": "5-10 years"
+}
+```
+
+---
+
+## 🔮 Future Enhancements
+
+- Email verification flow
+- Social authentication (Google, GitHub)
+- Profile picture upload
+- Advanced subject filtering
+- Availability scheduling for tutors
+- Student dashboard with booking system
+- Tutor dashboard with session management
+- Real-time messaging between students and tutors
+- Video call integration
+- Payment processing
+
+---
+
+## 📄 License
+
+This project is part of the TutorLink platform.
+
+---
+
+## 👥 Contributors
+
+Built with ❤️ by the TutorLink team
+
+---
+
+**Last Updated:** January 2025

@@ -300,6 +300,13 @@ export function AuthContainer() {
                 }}
               >
                 <div className="text-center">
+                  {/* TutorLink Logo and Brand */}
+                  <div className="flex items-center justify-center gap-2 mb-8">
+                    <div className="w-10 h-10 flex items-center justify-center">
+                      <img src="/logo.png" alt="TutorLink Logo" />
+                    </div>
+                    <span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-pink-200 bg-clip-text text-transparent">TutorLink</span>
+                  </div>
                   <h2 className="text-3xl font-bold mb-4">Hello, Friend!</h2>
                   <p className="text-white/80 mb-8 leading-relaxed max-w-xs mx-auto">
                     Enter your personal details and start your journey with us
@@ -330,6 +337,13 @@ export function AuthContainer() {
                 }}
               >
                 <div className="text-center">
+                  {/* TutorLink Logo and Brand */}
+                  <div className="flex items-center justify-center gap-2 mb-8">
+                    <div className="w-10 h-10 flex items-center justify-center">
+                      <img src="/logo.png" alt="TutorLink Logo" />
+                    </div>
+                    <span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-pink-200 bg-clip-text text-transparent">TutorLink</span>
+                  </div>
                   <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
                   <p className="text-white/80 mb-8 leading-relaxed max-w-xs mx-auto">
                     To keep connected with us please login with your personal info
