@@ -46,26 +46,42 @@ export function AuthContainer() {
 
   // Sync state with pathname only on initial load, not during animations
   useEffect(() => {
-    if (!isAnimating) {
-      setIsLogin(pathname === "/login" || pathname === "/")
+    // Only sync if not animating and component is ready
+    if (!isAnimating && isReady) {
+      const shouldBeLogin = pathname === "/login" || pathname === "/"
+      // Only update if different to prevent unnecessary re-renders
+      if (shouldBeLogin !== isLogin) {
+        setIsLogin(shouldBeLogin)
+      }
     }
-  }, [pathname, isAnimating])
+  }, [pathname, isAnimating, isReady, isLogin])
 
   const handleToggle = useCallback((toLogin: boolean) => {
     if (isAnimating || isLogin === toLogin) return
+    
+    const targetPath = toLogin ? "/login" : "/register"
+    // Don't push if already on the target path
+    if (pathname === targetPath) {
+      setIsLogin(toLogin)
+      return
+    }
+    
     setIsAnimating(true)
     
-    // Delay state change slightly to ensure smooth animation start
+    // Use requestAnimationFrame for smoother state transition
     requestAnimationFrame(() => {
       setIsLogin(toLogin)
+      
+      // Push route change after animations settle
+      setTimeout(() => {
+        router.push(targetPath, { scroll: false })
+        // Wait a bit more before allowing new animations
+        setTimeout(() => {
+          setIsAnimating(false)
+        }, 100)
+      }, 650)
     })
-
-    // Update URL after animation completes
-    setTimeout(() => {
-      router.push(toLogin ? "/login" : "/register", { scroll: false })
-      setIsAnimating(false)
-    }, 700)
-  }, [isAnimating, isLogin, router])
+  }, [isAnimating, isLogin, router, pathname])
 
   // Handler for Sign Up button click - slide panel and show role selection
   const handleSignUpClick = useCallback((data: { fullName: string; email: string; password: string }) => {
@@ -191,9 +207,13 @@ export function AuthContainer() {
                   backfaceVisibility: "hidden",
                   willChange: isAnimating ? "opacity, transform" : "auto",
                   transition: getTransition("0.5s"),
+                  minWidth: "400px",
+                  maxWidth: "500px",
                 }}
               >
-                <LoginForm />
+                <div className="w-full">
+                  <LoginForm />
+                </div>
               </div>
             </div>
 
@@ -214,10 +234,13 @@ export function AuthContainer() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: isLogin ? 0 : 1, x: isLogin ? 30 : 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                     className="absolute inset-0 flex items-center justify-center p-10"
                     style={{
                       pointerEvents: isLogin || signupStep !== "initial" ? "none" : "auto",
+                      minWidth: "400px",
+                      maxWidth: "500px",
+                      margin: "0 auto",
                     }}
                   >
                     <div className="w-full max-w-sm">
@@ -293,7 +316,8 @@ export function AuthContainer() {
                 isPanelSliding || signupStep !== "initial" ? "-100%" : isLogin ? "100%" : "0%"
               })`,
               backfaceVisibility: "hidden",
-              transition: isReady ? "transform 0.6s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
+              willChange: isAnimating || isPanelSliding ? "transform" : "auto",
+              transition: isReady ? "transform 0.65s cubic-bezier(0.65, 0, 0.35, 1)" : "none",
             }}
           >
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -305,7 +329,8 @@ export function AuthContainer() {
                   transform: `translateZ(0) translateX(${isLogin ? 0 : 20}px)`,
                   pointerEvents: isLogin ? "auto" : "none",
                   backfaceVisibility: "hidden",
-                  transition: getTransition("0.3s"),
+                  willChange: isAnimating ? "opacity, transform" : "auto",
+                  transition: getTransition("0.4s"),
                 }}
               >
                 <div className="text-center">
@@ -342,7 +367,8 @@ export function AuthContainer() {
                   transform: `translateZ(0) translateX(${isLogin ? -20 : 0}px)`,
                   pointerEvents: isLogin ? "none" : "auto",
                   backfaceVisibility: "hidden",
-                  transition: getTransition("0.3s"),
+                  willChange: isAnimating ? "opacity, transform" : "auto",
+                  transition: getTransition("0.4s"),
                 }}
               >
                 <div className="text-center">
