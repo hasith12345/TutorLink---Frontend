@@ -9,8 +9,8 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 flex items-center justify-center">
+                <img src="/logo.png" alt="" />
               </div>
               <span className="text-xl font-bold text-white">TutorLink</span>
             </Link>

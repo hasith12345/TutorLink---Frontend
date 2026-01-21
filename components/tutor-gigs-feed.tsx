@@ -181,7 +181,7 @@ function GigCard({ gig, index }: { gig: TutorGig; index: number }) {
           <span className="text-lg font-bold text-indigo-600">{gig.price}</span>
         </div>
 
-        <Button className="w-full mt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-xl">
+        <Button className="w-full mt-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white rounded-xl">
           Enroll Now
         </Button>
       </CardContent>

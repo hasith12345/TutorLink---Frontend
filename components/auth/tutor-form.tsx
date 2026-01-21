@@ -315,7 +315,7 @@ export function TutorForm({ onBack, onSuccess }: TutorFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Creating Account..." : "Create Tutor Account"}
         </button>

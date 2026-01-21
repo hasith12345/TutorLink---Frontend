@@ -8,7 +8,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/hero-background.png" 
+          src="/back.png" 
           alt="Tutoring background" 
           fill
           priority

@@ -92,7 +92,7 @@ export function TutorSearchSection() {
               </div>
 
               {/* Search Button */}
-              <Button className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-in fade-in">
+              <Button className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-in fade-in">
                 <Search className="w-5 h-5 mr-2" />
                 Search Tutors
               </Button>

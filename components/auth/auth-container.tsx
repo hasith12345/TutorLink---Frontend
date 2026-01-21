@@ -310,7 +310,7 @@ export function AuthContainer() {
 
           {/* Sliding Overlay Panel */}
           <div
-            className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center z-10"
+            className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 flex items-center justify-center z-10"
             style={{
               transform: `translateZ(0) translateX(${
                 isPanelSliding || signupStep !== "initial" ? "-100%" : isLogin ? "100%" : "0%"
@@ -339,7 +339,7 @@ export function AuthContainer() {
                     <div className="w-10 h-10 flex items-center justify-center">
                       <a href="/"><img src="/logo.png" alt="TutorLink Logo" /></a>
                     </div>
-                    <a href="/"><span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-pink-200 bg-clip-text text-transparent">TutorLink</span></a>
+                    <a href="/"><span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-200 bg-clip-text text-transparent">TutorLink</span></a>
                   </div>
                   <h2 className="text-3xl font-bold mb-4">Hello, Friend!</h2>
                   <p className="text-white/80 mb-8 leading-relaxed max-w-xs mx-auto">
@@ -377,7 +377,7 @@ export function AuthContainer() {
                     <div className="w-10 h-10 flex items-center justify-center">
                       <a href="/"><img src="/logo.png" alt="TutorLink Logo" /></a>
                     </div>
-                    <a href="/"><span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-pink-200 bg-clip-text text-transparent">TutorLink</span></a>
+                    <a href="/"><span className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-200 bg-clip-text text-transparent">TutorLink</span></a>
                   </div>
                   <h2 className="text-3xl font-bold mb-4">Welcome Back!</h2>
                   <p className="text-white/80 mb-8 leading-relaxed max-w-xs mx-auto">
