@@ -143,7 +143,7 @@ function GigCard({ gig, index }: { gig: TutorGig; index: number }) {
 
   return (
     <Card
-      className="bg-white rounded-2xl border-0 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden animate-in fade-in slide-in-from-bottom-4"
+      className="bg-white rounded-2xl border-0 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <CardContent className="p-5">

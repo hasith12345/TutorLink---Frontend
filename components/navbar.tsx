@@ -11,11 +11,11 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 flex items-center justify-center">
-              <img src="/logo.png" alt="" />
+              <img src="/logo.png" alt="TutorLink Logo" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
               TutorLink
