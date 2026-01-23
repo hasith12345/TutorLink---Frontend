@@ -101,7 +101,7 @@ export function TutorDetails({ onBack, onSuccess, userData }: TutorDetailsProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) {
       return
     }
@@ -109,7 +109,7 @@ export function TutorDetails({ onBack, onSuccess, userData }: TutorDetailsProps)
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,23 +117,36 @@ export function TutorDetails({ onBack, onSuccess, userData }: TutorDetailsProps)
         body: JSON.stringify({
           ...userData,
           ...formData,
-          role: 'tutor'
+          role: 'tutor',
         }),
       })
 
-      if (response.ok) {
-        onSuccess()
-      } else {
-        const errorData = await response.json()
-        setErrors({ submit: errorData.message || 'Signup failed. Please try again.' })
+      const data = await response.json()
+
+      if (!response.ok) {
+        setErrors({
+          submit: data.message || 'Signup failed. Please try again.',
+        })
+        return
       }
+
+      // ✅ STORE JWT TOKEN
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('role', data.role)
+
+      // ✅ REDIRECT USER
+      window.location.href = '/dashboard'
+
     } catch (error) {
       console.error('Signup error:', error)
-      setErrors({ submit: 'Network error. Please check your connection and try again.' })
+      setErrors({
+        submit: 'Network error. Please check your connection and try again.',
+      })
     } finally {
       setIsSubmitting(false)
     }
   }
+
 
   return (
     <div className="w-full h-full grid grid-cols-1 md:grid-cols-[40%_60%] overflow-hidden">
