@@ -109,7 +109,7 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
 
     try {
       // Simulate API call
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('http://localhost:5001/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,11 +120,13 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
         }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
-        onSuccess()
+        // Redirect to email verification page
+        window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}`
       } else {
-        const errorData = await response.json()
-        setErrors({ submit: errorData.message || 'Signup failed. Please try again.' })
+        setErrors({ submit: data.message || 'Signup failed. Please try again.' })
       }
     } catch (error) {
       console.error('Signup error:', error)

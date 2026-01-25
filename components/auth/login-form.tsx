@@ -28,9 +28,16 @@ export function LoginForm() {
       // ✅ Redirect user
       window.location.href = '/dashboard'
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error)
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred')
+      
+      // Check if error is due to unverified email
+      if (error.message?.includes('verify your email')) {
+        // Redirect to verification page
+        window.location.href = `/verify-email?email=${encodeURIComponent(email)}`
+      } else {
+        setError(error instanceof Error ? error.message : 'An unexpected error occurred')
+      }
     } finally {
       setIsSubmitting(false)
     }

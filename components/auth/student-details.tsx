@@ -121,12 +121,8 @@ export function StudentDetails({ onBack, onSuccess, userData }: StudentDetailsPr
         learningMode: formData.learningMode,
       })
 
-      // ✅ Store JWT token and role
-      authStorage.setToken(response.token)
-      authStorage.setRole(response.role)
-
-      // ✅ Redirect user
-      window.location.href = '/dashboard'
+      // Redirect to email verification page
+      window.location.href = `/verify-email?email=${encodeURIComponent(userData.email)}`
 
     } catch (error) {
       console.error('Signup error:', error)

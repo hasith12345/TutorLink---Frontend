@@ -1,5 +1,5 @@
 // API configuration and utilities
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api'
 
 export interface SignupData {
   fullName: string
@@ -24,6 +24,9 @@ export interface LoginData {
 export interface AuthResponse {
   token: string
   role: 'student' | 'tutor'
+  email?: string
+  isEmailVerified?: boolean
+  message?: string
 }
 
 export interface ApiError {
@@ -80,6 +83,20 @@ class ApiClient {
     return this.request<AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
+    })
+  }
+
+  async verifyEmail(email: string, code: string): Promise<{ verified: boolean; message: string }> {
+    return this.request('/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    })
+  }
+
+  async resendVerificationCode(email: string): Promise<{ sent: boolean; message: string }> {
+    return this.request('/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
     })
   }
 

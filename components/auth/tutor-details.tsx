@@ -120,12 +120,8 @@ export function TutorDetails({ onBack, onSuccess, userData }: TutorDetailsProps)
         experience: formData.yearsExperience,
       })
 
-      // ✅ Store JWT token and role
-      authStorage.setToken(response.token)
-      authStorage.setRole(response.role)
-
-      // ✅ Redirect user
-      window.location.href = '/dashboard'
+      // Redirect to email verification page
+      window.location.href = `/verify-email?email=${encodeURIComponent(userData.email)}`
 
     } catch (error) {
       console.error('Signup error:', error)
