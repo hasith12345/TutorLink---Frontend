@@ -31,6 +31,29 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
     "Other"
   ]
 
+  const getPasswordStrength = (pwd: string) => {
+    if (!pwd) return { strength: 0, label: "", color: "" }
+    
+    let score = 0
+    const hasLength = pwd.length >= 8 && pwd.length <= 12
+    const hasUppercase = /[A-Z]/.test(pwd)
+    const hasLowercase = /[a-z]/.test(pwd)
+    const hasNumber = /[0-9]/.test(pwd)
+    const hasSpecialChar = /[!@#$%^&*]/.test(pwd)
+    
+    if (hasLength) score++
+    if (hasUppercase) score++
+    if (hasLowercase) score++
+    if (hasNumber) score++
+    if (hasSpecialChar) score++
+    
+    if (score <= 2) return { strength: score, label: "Weak", color: "bg-red-500" }
+    if (score <= 4) return { strength: score, label: "Medium", color: "bg-yellow-500" }
+    return { strength: score, label: "Strong", color: "bg-green-500" }
+  }
+
+  const passwordStrength = getPasswordStrength(formData.password)
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
@@ -48,8 +71,17 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
 
     if (!formData.password) {
       newErrors.password = "Password is required"
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters"
+    } else if (formData.password.length < 8 || formData.password.length > 12) {
+      newErrors.password = "Password must be 8-12 characters"
+    } else {
+      const hasUppercase = /[A-Z]/.test(formData.password);
+      const hasLowercase = /[a-z]/.test(formData.password);
+      const hasNumber = /[0-9]/.test(formData.password);
+      const hasSpecialChar = /[!@#$%^&*]/.test(formData.password);
+      
+      if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+        newErrors.password = "Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!@#$%^&*)"
+      }
     }
 
     if (!formData.confirmPassword) {
@@ -77,7 +109,7 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
 
     try {
       // Simulate API call
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('http://localhost:5001/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,11 +120,13 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
         }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
-        onSuccess()
+        // Redirect to email verification page
+        window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}`
       } else {
-        const errorData = await response.json()
-        setErrors({ submit: errorData.message || 'Signup failed. Please try again.' })
+        setErrors({ submit: data.message || 'Signup failed. Please try again.' })
       }
     } catch (error) {
       console.error('Signup error:', error)
@@ -188,11 +222,11 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
 
         {/* Password */}
         <div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <div className="relative mb-2">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Password (min 8 characters)"
+              placeholder="Password (8-12 chars, A-Z, a-z, 0-9, !@#$%^&*)"
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 transition-all text-slate-800 placeholder:text-slate-400 ${
@@ -203,11 +237,31 @@ export function StudentForm({ onBack, onSuccess }: StudentFormProps) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10"
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
+          {formData.password && (
+            <div className="mb-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-slate-600">Password Strength:</span>
+                <span className={`text-xs font-semibold ${
+                  passwordStrength.label === "Weak" ? "text-red-500" :
+                  passwordStrength.label === "Medium" ? "text-yellow-500" :
+                  "text-green-500"
+                }`}>
+                  {passwordStrength.label}
+                </span>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-1.5">
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-300 ${passwordStrength.color}`}
+                  style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
           {errors.password && (
             <p className="text-red-500 text-xs mt-1">{errors.password}</p>
           )}

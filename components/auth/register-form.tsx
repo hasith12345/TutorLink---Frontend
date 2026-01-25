@@ -18,6 +18,29 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const getPasswordStrength = (pwd: string) => {
+    if (!pwd) return { strength: 0, label: "", color: "" }
+    
+    let score = 0
+    const hasLength = pwd.length >= 8 && pwd.length <= 12
+    const hasUppercase = /[A-Z]/.test(pwd)
+    const hasLowercase = /[a-z]/.test(pwd)
+    const hasNumber = /[0-9]/.test(pwd)
+    const hasSpecialChar = /[!@#$%^&*]/.test(pwd)
+    
+    if (hasLength) score++
+    if (hasUppercase) score++
+    if (hasLowercase) score++
+    if (hasNumber) score++
+    if (hasSpecialChar) score++
+    
+    if (score <= 2) return { strength: score, label: "Weak", color: "bg-red-500" }
+    if (score <= 4) return { strength: score, label: "Medium", color: "bg-yellow-500" }
+    return { strength: score, label: "Strong", color: "bg-green-500" }
+  }
+
+  const passwordStrength = getPasswordStrength(password)
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
@@ -35,8 +58,17 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
 
     if (!password) {
       newErrors.password = "Password is required"
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters"
+    } else if (password.length < 8 || password.length > 12) {
+      newErrors.password = "Password must be 8-12 characters"
+    } else {
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasLowercase = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*]/.test(password);
+      
+      if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+        newErrors.password = "Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!@#$%^&*)"
+      }
     }
 
     if (!confirmPassword) {
@@ -69,10 +101,10 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
   return (
     <div className="w-full max-w-sm">
       <h1 className="text-3xl font-bold text-slate-800 mb-2 text-center">Create Account</h1>
-      <p className="text-slate-500 text-sm mb-6 text-center">Start your journey with us today</p>
+      <p className="text-slate-500 text-sm mb-3 text-center">Start your journey with us today</p>
 
       {/* Social Login */}
-      <div className="flex justify-center gap-4 mb-6">
+      <div className="flex justify-center gap-4 mb-3">
         <button className="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-slate-50 transition-colors">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
             <path
@@ -103,12 +135,12 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
         </button>
       </div>
 
-      <div className="relative mb-6">
+      <div className="relative mb-3">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-slate-400">or register with email</span>
+          <span className="bg-white px-02 text-slate-400">or register with email</span>
         </div>
       </div>
 
@@ -153,28 +185,50 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
           )}
         </div>
 
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              setErrors(prev => ({ ...prev, password: "" }))
-            }}
-            className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
-              errors.password ? "ring-2 ring-red-500" : ""
-            }`}
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
+        <div>
+          <div className="relative mb-2">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password (8-12 chars, A-Z, a-z, 0-9, !@#$%^&*)"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setErrors(prev => ({ ...prev, password: "" }))
+              }}
+              className={`w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 ${
+                errors.password ? "ring-2 ring-red-500" : ""
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 z-10"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          {password && (
+            <div className="mb-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-slate-600">Password Strength:</span>
+                <span className={`text-xs font-semibold ${
+                  passwordStrength.label === "Weak" ? "text-red-500" :
+                  passwordStrength.label === "Medium" ? "text-yellow-500" :
+                  "text-green-500"
+                }`}>
+                  {passwordStrength.label}
+                </span>
+              </div>
+              <div className="w-full bg-slate-200 rounded-full h-1.5">
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-300 ${passwordStrength.color}`}
+                  style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
           {errors.password && (
             <p className="mt-1 text-xs text-red-600">{errors.password}</p>
           )}

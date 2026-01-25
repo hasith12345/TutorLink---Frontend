@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { ArrowLeft, BookOpen, GraduationCap, Clock, X } from "lucide-react"
+import { api, authStorage } from "@/lib/api"
 
 interface TutorDetailsProps {
   onBack: () => void
@@ -109,38 +110,23 @@ export function TutorDetails({ onBack, onSuccess, userData }: TutorDetailsProps)
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...userData,
-          ...formData,
-          role: 'tutor',
-        }),
+      const response = await api.signup({
+        fullName: userData.fullName,
+        email: userData.email,
+        password: userData.password,
+        role: 'tutor',
+        subjects: formData.subjects,
+        educationLevels: formData.educationLevels,
+        experience: formData.yearsExperience,
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        setErrors({
-          submit: data.message || 'Signup failed. Please try again.',
-        })
-        return
-      }
-
-      // ✅ STORE JWT TOKEN
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('role', data.role)
-
-      // ✅ REDIRECT USER
-      window.location.href = '/dashboard'
+      // Redirect to email verification page
+      window.location.href = `/verify-email?email=${encodeURIComponent(userData.email)}`
 
     } catch (error) {
       console.error('Signup error:', error)
       setErrors({
-        submit: 'Network error. Please check your connection and try again.',
+        submit: error instanceof Error ? error.message : 'An unexpected error occurred',
       })
     } finally {
       setIsSubmitting(false)
