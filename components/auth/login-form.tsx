@@ -4,40 +4,37 @@ import type React from "react"
 
 import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { api, authStorage } from "@/lib/api"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
+    setError("")
+    setIsSubmitting(true)
 
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    });
+    try {
+      const response = await api.login({ email, password })
 
-    const data = await response.json();
+      // ✅ Store JWT token and role
+      authStorage.setToken(response.token)
+      authStorage.setRole(response.role)
 
-    if (!response.ok) {
-      alert(data.message || "Login failed");
-      return;
+      // ✅ Redirect user
+      window.location.href = '/dashboard'
+
+    } catch (error) {
+      console.error('Login error:', error)
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // ✅ Save token
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.role);
-
-    // ✅ Redirect
-    window.location.href = "/dashboard";
-  };
+  }
 
 
   return (
@@ -87,13 +84,22 @@ export function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+        
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setError("")
+            }}
             className="w-full pl-11 pr-4 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
             required
           />
@@ -105,7 +111,10 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setError("")
+            }}
             className="w-full pl-11 pr-11 py-3 bg-slate-100 rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all text-slate-800 placeholder:text-slate-400"
             required
           />
@@ -126,9 +135,10 @@ export function LoginForm() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-500/25"
+          disabled={isSubmitting}
+          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Sign In
+          {isSubmitting ? 'Signing In...' : 'Sign In'}
         </button>
         <p className="text-black/50 text-xs max-w-xs mx-auto leading-relaxed">
             By signing in, you agree to our <span className="underline cursor-pointer hover:text-blue-500">Terms</span> & <span className="underline cursor-pointer hover:text-blue-500">Privacy Policy</span>

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { ArrowLeft, GraduationCap, BookOpen, MapPin, X } from "lucide-react"
+import { api, authStorage } from "@/lib/api"
 
 interface StudentDetailsProps {
   onBack: () => void
@@ -109,38 +110,28 @@ export function StudentDetails({ onBack, onSuccess, userData }: StudentDetailsPr
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...userData,
-          ...formData,
-          role: 'student',
-        }),
+      const response = await api.signup({
+        fullName: userData.fullName,
+        email: userData.email,
+        password: userData.password,
+        role: 'student',
+        educationLevel: formData.educationLevel,
+        grade: formData.grade,
+        subjects: formData.subjects,
+        learningMode: formData.learningMode,
       })
 
-      const data = await response.json()
+      // ✅ Store JWT token and role
+      authStorage.setToken(response.token)
+      authStorage.setRole(response.role)
 
-      if (!response.ok) {
-        setErrors({
-          submit: data.message || 'Signup failed. Please try again.',
-        })
-        return
-      }
-
-      // ✅ STORE JWT TOKEN
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('role', data.role)
-
-      // ✅ REDIRECT USER
+      // ✅ Redirect user
       window.location.href = '/dashboard'
 
     } catch (error) {
       console.error('Signup error:', error)
       setErrors({
-        submit: 'Network error. Please check your connection and try again.',
+        submit: error instanceof Error ? error.message : 'An unexpected error occurred',
       })
     } finally {
       setIsSubmitting(false)
