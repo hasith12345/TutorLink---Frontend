@@ -21,12 +21,40 @@ export function LoginForm() {
     try {
       const response = await api.login({ email, password })
 
-      // ✅ Store JWT token and role
+      // ✅ Store JWT token
       authStorage.setToken(response.token)
-      authStorage.setRole(response.role)
 
-      // ✅ Redirect user
-      window.location.href = '/dashboard'
+      // ✅ Check if response contains user object (new format)
+      if (response.user) {
+        // Store user info
+        authStorage.setUser(response.user)
+
+        const { hasStudentProfile, hasTutorProfile } = response.user
+
+        // ✅ ROLE-BASED REDIRECT LOGIC
+        // Case 1: User has ONLY Student profile → redirect to home page
+        if (hasStudentProfile && !hasTutorProfile) {
+          authStorage.setActiveRole('student')
+          window.location.href = '/'
+        }
+        // Case 2: User has ONLY Tutor profile → redirect to dashboard
+        else if (hasTutorProfile && !hasStudentProfile) {
+          authStorage.setActiveRole('tutor')
+          window.location.href = '/dashboard'
+        }
+        // Case 3: User has BOTH profiles → must select role
+        else if (hasStudentProfile && hasTutorProfile) {
+          window.location.href = '/select-role'
+        }
+        // Case 4: User has NO profiles → redirect to complete profile
+        else {
+          window.location.href = '/complete-profile'
+        }
+      } else {
+        // Fallback for old response format (during transition)
+        authStorage.setRole(response.role!)
+        window.location.href = '/dashboard'
+      }
 
     } catch (error: any) {
       console.error('Login error:', error)

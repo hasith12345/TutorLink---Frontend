@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Search, UserPlus } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -60,13 +61,15 @@ export function HeroSection() {
           A centralized platform connecting students and tutors for online and physical classes.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 text-lg px-8 py-6 rounded-xl"
-          >
-            <Search className="w-5 h-5 mr-2" />
-            Find a Tutor
-          </Button>
+          <a href="#tutor-search">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 text-lg px-8 py-6 rounded-xl"
+            >
+              <Search className="w-5 h-5 mr-2" />
+              Find a Tutor
+            </Button>
+          </a>
           <Button
             size="lg"
             variant="outline"

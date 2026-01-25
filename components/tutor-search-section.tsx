@@ -31,7 +31,7 @@ export function TutorSearchSection() {
   ]
 
   return (
-    <section className="py-0 px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+    <section id="tutor-search" className="py-0 px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
       <div className="max-w-4xl mx-auto">
         <Card className="bg-white shadow-2xl rounded-2xl border-0">
           <CardContent className="p-6 md:p-8">

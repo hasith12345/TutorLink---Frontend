@@ -21,12 +21,33 @@ export interface LoginData {
   password: string
 }
 
+// ✅ Updated AuthResponse for new login structure
 export interface AuthResponse {
   token: string
-  role: 'student' | 'tutor'
+  role?: 'student' | 'tutor'  // For signup response
   email?: string
   isEmailVerified?: boolean
   message?: string
+  user?: {
+    id: string
+    email: string
+    fullName: string
+    hasStudentProfile: boolean
+    hasTutorProfile: boolean
+  }
+}
+
+// ✅ Add Role Data Interface
+export interface AddRoleData {
+  role: 'student' | 'tutor'
+  // Student-specific fields
+  educationLevel?: string
+  grade?: string
+  subjects?: string[]
+  learningMode?: string
+  // Tutor-specific fields
+  educationLevels?: string[]
+  experience?: string
 }
 
 export interface ApiError {
@@ -100,6 +121,18 @@ class ApiClient {
     })
   }
 
+  // ✅ Add Role endpoint (authenticated)
+  async addRole(data: AddRoleData): Promise<{ message: string; hasStudentProfile: boolean; hasTutorProfile: boolean }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/add-role', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    })
+  }
+
   // Add token to requests for authenticated endpoints
   setAuthToken(token: string) {
     // This can be used for future authenticated requests
@@ -109,7 +142,7 @@ class ApiClient {
 
 export const api = new ApiClient(API_BASE_URL)
 
-// Helper functions for auth storage
+// ✅ Updated helper functions for auth storage
 export const authStorage = {
   setToken(token: string) {
     if (typeof window !== 'undefined') {
@@ -124,6 +157,36 @@ export const authStorage = {
     return null
   },
 
+  // ✅ Store user info with role flags
+  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean }) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user))
+    }
+  },
+
+  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean } | null {
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user')
+      return user ? JSON.parse(user) : null
+    }
+    return null
+  },
+
+  // ✅ Store active role (for users with both roles)
+  setActiveRole(role: 'student' | 'tutor') {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('activeRole', role)
+    }
+  },
+
+  getActiveRole(): 'student' | 'tutor' | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeRole') as 'student' | 'tutor' | null
+    }
+    return null
+  },
+
+  // Legacy - kept for backward compatibility during signup
   setRole(role: string) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('role', role)
@@ -141,6 +204,8 @@ export const authStorage = {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token')
       localStorage.removeItem('role')
+      localStorage.removeItem('user')
+      localStorage.removeItem('activeRole')
     }
   },
 
