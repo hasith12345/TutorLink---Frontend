@@ -31,7 +31,7 @@ export function TutorSearchSection() {
   ]
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+    <section className="py-0 px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
       <div className="max-w-4xl mx-auto">
         <Card className="bg-white shadow-2xl rounded-2xl border-0">
           <CardContent className="p-6 md:p-8">
@@ -92,7 +92,7 @@ export function TutorSearchSection() {
               </div>
 
               {/* Search Button */}
-              <Button className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-in fade-in">
+              <Button className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-in fade-in">
                 <Search className="w-5 h-5 mr-2" />
                 Search Tutors
               </Button>

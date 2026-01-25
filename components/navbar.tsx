@@ -11,13 +11,13 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 flex items-center justify-center">
-              <img src="/logo.png" alt="" />
+              <img src="/logo.png" alt="TutorLink Logo" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
               TutorLink
             </span>
           </Link>
@@ -40,7 +40,7 @@ export function Navbar() {
             <Button variant="ghost" className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
               <a href="/login">Login</a>
             </Button>
-            <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-md hover:shadow-lg transition-all duration-300">
+            <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-300">
               <a href="/register">Register</a>
             </Button>
           </div>
@@ -84,7 +84,7 @@ export function Navbar() {
             <Button variant="outline" className="w-full justify-center bg-transparent">
               Login
             </Button>
-            <Button className="w-full justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">
+            <Button className="w-full justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white">
               Register
             </Button>
           </div>

@@ -26,10 +26,10 @@ const features = [
 
 export function PlatformFeatures() {
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="about" className="py-30 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <span className="inline-block px-4 py-1.5 bg-pink-100 text-pink-700 rounded-full text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
             Platform Features
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
@@ -47,7 +47,7 @@ export function PlatformFeatures() {
               className="bg-gradient-to-br from-gray-50 to-gray-100/50 border-0 rounded-2xl hover:shadow-lg transition-all duration-300"
             >
               <CardContent className="p-8 flex items-start gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 flex items-center justify-center shrink-0">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <div>

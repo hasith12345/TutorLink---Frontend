@@ -26,7 +26,7 @@ const benefits = [
 
 export function StudentBenefits() {
   return (
-    <section id="students" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="students" className="py-45 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <span className="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
@@ -47,7 +47,7 @@ export function StudentBenefits() {
               className="bg-gray-50 border-0 rounded-2xl hover:shadow-lg transition-all duration-300 group"
             >
               <CardContent className="p-6">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
                   <benefit.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{benefit.title}</h3>
