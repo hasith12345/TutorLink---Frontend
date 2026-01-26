@@ -190,7 +190,7 @@ export function RegisterForm({ onSignUpClick }: RegisterFormProps = {}) {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Password (8-12 chars, A-Z, a-z, 0-9, !@#$%^&*)"
+              placeholder="Password (Example@123)"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value)
