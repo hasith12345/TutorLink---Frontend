@@ -16,6 +16,21 @@ export interface SignupData {
   experience?: string
 }
 
+// ✅ OAuth Signup Data (no password needed)
+export interface OAuthSignupData {
+  fullName: string
+  email: string
+  role: 'student' | 'tutor'
+  // Student-specific fields
+  educationLevel?: string
+  grade?: string
+  subjects?: string[]
+  learningMode?: string
+  // Tutor-specific fields
+  educationLevels?: string[]
+  experience?: string
+}
+
 export interface LoginData {
   email: string
   password: string
@@ -95,6 +110,14 @@ class ApiClient {
   // Authentication endpoints
   async signup(data: SignupData): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ✅ OAuth Signup - Creates account for OAuth users with profile
+  async oauthSignup(data: OAuthSignupData): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/oauth/signup', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -207,6 +230,11 @@ export const authStorage = {
       localStorage.removeItem('user')
       localStorage.removeItem('activeRole')
     }
+  },
+
+  // Alias for clear (used in some components)
+  clearAuth() {
+    this.clear()
   },
 
   isAuthenticated(): boolean {
