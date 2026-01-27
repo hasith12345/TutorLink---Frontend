@@ -3,11 +3,10 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
-import { ArrowLeft, Bell, Lock, Globe, Moon, Sun, Monitor } from "lucide-react"
+import { ArrowLeft, Bell, Lock } from "lucide-react"
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system")
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [pushNotifications, setPushNotifications] = useState(true)
 
@@ -26,53 +25,6 @@ export default function SettingsPage() {
         </button>
 
         <h1 className="text-3xl font-bold text-slate-800 mb-8">Settings</h1>
-
-        {/* Appearance Settings */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <Globe className="w-6 h-6 text-indigo-600" />
-            <h2 className="text-xl font-bold text-slate-800">Appearance</h2>
-          </div>
-
-          <div className="space-y-4">
-            <label className="text-sm text-slate-600 block mb-2">Theme</label>
-            <div className="grid grid-cols-3 gap-4">
-              <button
-                onClick={() => setTheme("light")}
-                className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all ${
-                  theme === "light"
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Sun className="w-6 h-6 mb-2 text-amber-500" />
-                <span className="text-sm font-medium">Light</span>
-              </button>
-              <button
-                onClick={() => setTheme("dark")}
-                className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all ${
-                  theme === "dark"
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Moon className="w-6 h-6 mb-2 text-slate-700" />
-                <span className="text-sm font-medium">Dark</span>
-              </button>
-              <button
-                onClick={() => setTheme("system")}
-                className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all ${
-                  theme === "system"
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Monitor className="w-6 h-6 mb-2 text-slate-600" />
-                <span className="text-sm font-medium">System</span>
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Notification Settings */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-6">

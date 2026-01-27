@@ -1,7 +1,24 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
 export function CallToAction() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    // Check if user is authenticated by checking for auth token or user data
+    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
+    const user = localStorage.getItem("user") || sessionStorage.getItem("user")
+    setIsAuthenticated(!!(token || user))
+  }, [])
+
+  // Don't render if user is authenticated
+  if (isAuthenticated) {
+    return null
+  }
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

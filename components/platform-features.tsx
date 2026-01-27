@@ -26,9 +26,9 @@ const features = [
 
 export function PlatformFeatures() {
   return (
-    <section id="about" className="py-30 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="about" className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <span className="inline-block px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
             Platform Features
           </span>

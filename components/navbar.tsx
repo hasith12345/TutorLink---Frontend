@@ -4,20 +4,23 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Bell, Settings, ChevronDown, LogOut } from "lucide-react"
+import { Menu, X, Bell, Settings, ChevronDown, LogOut, Search } from "lucide-react"
 import { authStorage } from "@/lib/api"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [activeRole, setActiveRole] = useState<'student' | 'tutor' | null>(null)
   const router = useRouter()
 
   useEffect(() => {
     const token = authStorage.getToken()
     if (token) {
       const userData = authStorage.getUser()
+      const role = authStorage.getActiveRole()
       setUser(userData)
+      setActiveRole(role)
     }
   }, [])
 
@@ -42,19 +45,6 @@ export function Navbar() {
               TutorLink
             </span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="#students" className="text-gray-600 hover:text-indigo-600 transition-colors font-medium">
-              Students
-            </Link>
-            <Link href="#tutors" className="text-gray-600 hover:text-indigo-600 transition-colors font-medium">
-              Tutors
-            </Link>
-            <Link href="#about" className="text-gray-600 hover:text-indigo-600 transition-colors font-medium">
-              About
-            </Link>
-          </div>
 
           {/* Desktop Auth/User Section */}
           {isLoggedIn ? (
@@ -89,7 +79,9 @@ export function Navbar() {
                     <p className="text-sm font-semibold text-gray-800">
                       {user?.email?.split('@')[0] || 'User'}
                     </p>
-                    <p className="text-xs text-gray-500">Student</p>
+                    <p className="text-xs text-gray-500 capitalize">
+                      {activeRole || 'User'}
+                    </p>
                   </div>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
@@ -97,6 +89,17 @@ export function Navbar() {
                 {/* Dropdown Menu */}
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                    {activeRole === 'tutor' && (
+                      <button
+                        onClick={() => {
+                          setIsProfileOpen(false)
+                          router.push('/dashboard')
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        Dashboard
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         setIsProfileOpen(false)
@@ -148,27 +151,30 @@ export function Navbar() {
         } overflow-hidden bg-white border-t border-gray-100`}
       >
         <div className="px-4 py-4 space-y-3">
-          <Link
-            href="#students"
-            className="block py-2 px-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+          <Button
+            onClick={() => {
+              router.push('/search')
+              setIsOpen(false)
+            }}
+            className="w-full justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 hover:from-indigo-600 hover:via-purple-600 hover:to-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-300"
           >
-            Students
-          </Link>
-          <Link
-            href="#tutors"
-            className="block py-2 px-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-          >
-            Tutors
-          </Link>
-          <Link
-            href="#about"
-            className="block py-2 px-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-          >
-            About
-          </Link>
+            <Search className="w-4 h-4 mr-2" />
+            Search Tutors
+          </Button>
           
           {isLoggedIn ? (
             <div className="pt-3 border-t border-gray-100 space-y-2">
+              {activeRole === 'tutor' && (
+                <button
+                  onClick={() => {
+                    router.push('/dashboard')
+                    setIsOpen(false)
+                  }}
+                  className="w-full flex items-center gap-2 py-2 px-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                >
+                  Dashboard
+                </button>
+              )}
               <button
                 onClick={() => router.push('/dashboard/notifications')}
                 className="w-full flex items-center gap-2 py-2 px-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"

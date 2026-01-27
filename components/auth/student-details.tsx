@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, GraduationCap, BookOpen, MapPin, X } from "lucide-react"
 import { api, authStorage } from "@/lib/api"
@@ -16,6 +17,7 @@ interface StudentDetailsProps {
 }
 
 export function StudentDetails({ onBack, onSuccess, userData }: StudentDetailsProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     educationLevel: "",
     grade: "",
@@ -121,8 +123,8 @@ export function StudentDetails({ onBack, onSuccess, userData }: StudentDetailsPr
         learningMode: formData.learningMode,
       })
 
-      // Redirect to email verification page
-      window.location.href = `/verify-email?email=${encodeURIComponent(userData.email)}`
+      // Redirect to email verification page using Next.js router for instant navigation
+      router.push(`/verify-email?email=${encodeURIComponent(userData.email)}`)
 
     } catch (error) {
       console.error('Signup error:', error)

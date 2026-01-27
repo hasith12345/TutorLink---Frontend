@@ -65,6 +65,49 @@ export interface AddRoleData {
   experience?: string
 }
 
+// ✅ User Profile Response
+export interface UserProfile {
+  id: string
+  fullName: string
+  email: string
+  isEmailVerified: boolean
+  createdAt: string
+  updatedAt: string
+  hasStudentProfile: boolean
+  hasTutorProfile: boolean
+  student: {
+    id: string
+    educationLevel: string | null
+    grade: string | null
+    subjects: string[]
+    learningMode: string | null
+    createdAt: string
+  } | null
+  tutor: {
+    id: string
+    subjects: string[]
+    educationLevels: string[]
+    experience: string | null
+    createdAt: string
+  } | null
+}
+
+// ✅ Update Profile Request Data
+export interface UpdateProfileData {
+  fullName?: string
+  student?: {
+    educationLevel?: string
+    grade?: string
+    subjects?: string[]
+    learningMode?: string
+  }
+  tutor?: {
+    subjects?: string[]
+    educationLevels?: string[]
+    experience?: string
+  }
+}
+
 export interface ApiError {
   message: string
 }
@@ -149,6 +192,29 @@ class ApiClient {
     const token = authStorage.getToken()
     return this.request('/auth/add-role', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ✅ Get User Profile (authenticated)
+  async getProfile(): Promise<UserProfile> {
+    const token = authStorage.getToken()
+    return this.request<UserProfile>('/auth/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    })
+  }
+
+  // ✅ Update User Profile (authenticated)
+  async updateProfile(data: UpdateProfileData): Promise<{ message: string; profile: UserProfile }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/profile', {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`
       },
