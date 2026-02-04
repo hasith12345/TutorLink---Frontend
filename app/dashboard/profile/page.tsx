@@ -3,22 +3,8 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
-import { ArrowLeft, User, Mail, Calendar, Edit, GraduationCap, BookOpen, Loader2, X, Check } from "lucide-react"
+import { ArrowLeft, User, Mail, Calendar, Edit, GraduationCap, BookOpen, Loader2, X } from "lucide-react"
 import { api, authStorage, UserProfile, UpdateProfileData } from "@/lib/api"
-
-// Available options for dropdowns
-const SUBJECTS = [
-  "Mathematics", "Physics", "Chemistry", "Biology", "English",
-  "History", "Geography", "Computer Science", "Economics", "Accounting"
-]
-
-const EDUCATION_LEVELS = [
-  "primary", "secondary", "high-school", "undergraduate", "graduate"
-]
-
-const LEARNING_MODES = ["online", "physical", "both"]
-
-const EXPERIENCE_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -35,15 +21,19 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     fullName: '',
     student: {
-      educationLevel: '',
-      grade: '',
-      subjects: [] as string[],
-      learningMode: ''
+      dob: '',
+      phone: '',
+      address: '',
+      schoolGrade: '',
+      schoolName: '',
+      parentName: '',
+      parentPhone: ''
     },
     tutor: {
-      subjects: [] as string[],
-      educationLevels: [] as string[],
-      experience: ''
+      dob: '',
+      phone: '',
+      address: '',
+      idNumber: ''
     }
   })
 
@@ -61,15 +51,19 @@ export default function ProfilePage() {
         setFormData({
           fullName: data.fullName,
           student: {
-            educationLevel: data.student?.educationLevel || '',
-            grade: data.student?.grade || '',
-            subjects: data.student?.subjects || [],
-            learningMode: data.student?.learningMode || ''
+            dob: data.student?.dob || '',
+            phone: data.student?.phone || '',
+            address: data.student?.address || '',
+            schoolGrade: data.student?.schoolGrade || '',
+            schoolName: data.student?.schoolName || '',
+            parentName: data.student?.parentName || '',
+            parentPhone: data.student?.parentPhone || ''
           },
           tutor: {
-            subjects: data.tutor?.subjects || [],
-            educationLevels: data.tutor?.educationLevels || [],
-            experience: data.tutor?.experience || ''
+            dob: data.tutor?.dob || '',
+            phone: data.tutor?.phone || '',
+            address: data.tutor?.address || '',
+            idNumber: data.tutor?.idNumber || ''
           }
         })
       } catch (err) {
@@ -114,44 +108,22 @@ export default function ProfilePage() {
       setFormData({
         fullName: profile.fullName,
         student: {
-          educationLevel: profile.student?.educationLevel || '',
-          grade: profile.student?.grade || '',
-          subjects: profile.student?.subjects || [],
-          learningMode: profile.student?.learningMode || ''
+          dob: profile.student?.dob || '',
+          phone: profile.student?.phone || '',
+          address: profile.student?.address || '',
+          schoolGrade: profile.student?.schoolGrade || '',
+          schoolName: profile.student?.schoolName || '',
+          parentName: profile.student?.parentName || '',
+          parentPhone: profile.student?.parentPhone || ''
         },
         tutor: {
-          subjects: profile.tutor?.subjects || [],
-          educationLevels: profile.tutor?.educationLevels || [],
-          experience: profile.tutor?.experience || ''
+          dob: profile.tutor?.dob || '',
+          phone: profile.tutor?.phone || '',
+          address: profile.tutor?.address || '',
+          idNumber: profile.tutor?.idNumber || ''
         }
       })
     }
-  }
-
-  const handleSubjectToggle = (subject: string, type: 'student' | 'tutor') => {
-    setFormData(prev => {
-      const subjects = prev[type].subjects
-      const newSubjects = subjects.includes(subject)
-        ? subjects.filter(s => s !== subject)
-        : [...subjects, subject]
-      return {
-        ...prev,
-        [type]: { ...prev[type], subjects: newSubjects }
-      }
-    })
-  }
-
-  const handleEducationLevelToggle = (level: string) => {
-    setFormData(prev => {
-      const levels = prev.tutor.educationLevels
-      const newLevels = levels.includes(level)
-        ? levels.filter(l => l !== level)
-        : [...levels, level]
-      return {
-        ...prev,
-        tutor: { ...prev.tutor, educationLevels: newLevels }
-      }
-    })
   }
 
   const handleSave = async () => {
@@ -166,19 +138,23 @@ export default function ProfilePage() {
       // Add student data if student profile exists
       if (profile?.hasStudentProfile) {
         updateData.student = {
-          educationLevel: formData.student.educationLevel || undefined,
-          grade: formData.student.grade || undefined,
-          subjects: formData.student.subjects,
-          learningMode: formData.student.learningMode || undefined
+          dob: formData.student.dob || undefined,
+          phone: formData.student.phone || undefined,
+          address: formData.student.address || undefined,
+          schoolGrade: formData.student.schoolGrade || undefined,
+          schoolName: formData.student.schoolName || undefined,
+          parentName: formData.student.parentName || undefined,
+          parentPhone: formData.student.parentPhone || undefined
         }
       }
 
       // Add tutor data if tutor profile exists
       if (profile?.hasTutorProfile) {
         updateData.tutor = {
-          subjects: formData.tutor.subjects,
-          educationLevels: formData.tutor.educationLevels,
-          experience: formData.tutor.experience || undefined
+          dob: formData.tutor.dob || undefined,
+          phone: formData.tutor.phone || undefined,
+          address: formData.tutor.address || undefined,
+          idNumber: formData.tutor.idNumber || undefined
         }
       }
 
@@ -312,40 +288,52 @@ export default function ProfilePage() {
             </div>
             
             <div className="space-y-4">
-              {profile.student.educationLevel && (
+              {profile.student.dob && (
                 <div>
-                  <p className="text-sm text-slate-500">Education Level</p>
-                  <p className="text-base text-slate-800 font-medium capitalize">{profile.student.educationLevel}</p>
+                  <p className="text-sm text-slate-500">Date of Birth</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.dob}</p>
                 </div>
               )}
               
-              {profile.student.grade && (
+              {profile.student.phone && (
                 <div>
-                  <p className="text-sm text-slate-500">Grade</p>
-                  <p className="text-base text-slate-800 font-medium">{profile.student.grade}</p>
+                  <p className="text-sm text-slate-500">Phone Number</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.phone}</p>
                 </div>
               )}
               
-              {profile.student.subjects && profile.student.subjects.length > 0 && (
+              {profile.student.address && (
                 <div>
-                  <p className="text-sm text-slate-500 mb-2">Subjects</p>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.student.subjects.map((subject, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-                      >
-                        {subject}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-slate-500">Address</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.address}</p>
                 </div>
               )}
               
-              {profile.student.learningMode && (
+              {profile.student.schoolGrade && (
                 <div>
-                  <p className="text-sm text-slate-500">Preferred Learning Mode</p>
-                  <p className="text-base text-slate-800 font-medium capitalize">{profile.student.learningMode}</p>
+                  <p className="text-sm text-slate-500">School Grade</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.schoolGrade}</p>
+                </div>
+              )}
+              
+              {profile.student.schoolName && (
+                <div>
+                  <p className="text-sm text-slate-500">School Name</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.schoolName}</p>
+                </div>
+              )}
+              
+              {profile.student.parentName && (
+                <div>
+                  <p className="text-sm text-slate-500">Parent Name</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.parentName}</p>
+                </div>
+              )}
+              
+              {profile.student.parentPhone && (
+                <div>
+                  <p className="text-sm text-slate-500">Parent Phone</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.parentPhone}</p>
                 </div>
               )}
             </div>
@@ -361,42 +349,31 @@ export default function ProfilePage() {
             </div>
             
             <div className="space-y-4">
-              {profile.tutor.experience && (
+              {profile.tutor.dob && (
                 <div>
-                  <p className="text-sm text-slate-500">Experience</p>
-                  <p className="text-base text-slate-800 font-medium">{profile.tutor.experience} years</p>
+                  <p className="text-sm text-slate-500">Date of Birth</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.tutor.dob}</p>
                 </div>
               )}
               
-              {profile.tutor.subjects && profile.tutor.subjects.length > 0 && (
+              {profile.tutor.phone && (
                 <div>
-                  <p className="text-sm text-slate-500 mb-2">Teaching Subjects</p>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.tutor.subjects.map((subject, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium"
-                      >
-                        {subject}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-slate-500">Phone Number</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.tutor.phone}</p>
                 </div>
               )}
               
-              {profile.tutor.educationLevels && profile.tutor.educationLevels.length > 0 && (
+              {profile.tutor.address && (
                 <div>
-                  <p className="text-sm text-slate-500 mb-2">Teaching Levels</p>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.tutor.educationLevels.map((level, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium capitalize"
-                      >
-                        {level}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-slate-500">Address</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.tutor.address}</p>
+                </div>
+              )}
+              
+              {profile.tutor.idNumber && (
+                <div>
+                  <p className="text-sm text-slate-500">ID Number</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.tutor.idNumber}</p>
                 </div>
               )}
             </div>
@@ -454,87 +431,113 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Education Level
-                      </label>
-                      <select
-                        value={formData.student.educationLevel}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          student: { ...prev.student, educationLevel: e.target.value }
-                        }))}
-                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                      >
-                        <option value="">Select education level</option>
-                        {EDUCATION_LEVELS.map(level => (
-                          <option key={level} value={level} className="capitalize">{level}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Grade
+                        Date of Birth
                       </label>
                       <input
-                        type="text"
-                        value={formData.student.grade}
+                        type="date"
+                        value={formData.student.dob}
                         onChange={(e) => setFormData(prev => ({
                           ...prev,
-                          student: { ...prev.student, grade: e.target.value }
+                          student: { ...prev.student, dob: e.target.value }
                         }))}
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                        placeholder="e.g., Grade 10, Year 2"
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Subjects
+                        Phone Number
                       </label>
-                      <div className="flex flex-wrap gap-2">
-                        {SUBJECTS.map(subject => (
-                          <button
-                            key={subject}
-                            type="button"
-                            onClick={() => handleSubjectToggle(subject, 'student')}
-                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                              formData.student.subjects.includes(subject)
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                          >
-                            {formData.student.subjects.includes(subject) && (
-                              <Check className="w-3 h-3 inline mr-1" />
-                            )}
-                            {subject}
-                          </button>
-                        ))}
-                      </div>
+                      <input
+                        type="tel"
+                        value={formData.student.phone}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, phone: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="0771234567"
+                      />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Preferred Learning Mode
+                        Address
                       </label>
-                      <div className="flex gap-3">
-                        {LEARNING_MODES.map(mode => (
-                          <button
-                            key={mode}
-                            type="button"
-                            onClick={() => setFormData(prev => ({
-                              ...prev,
-                              student: { ...prev.student, learningMode: mode }
-                            }))}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${
-                              formData.student.learningMode === mode
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                          >
-                            {mode}
-                          </button>
-                        ))}
-                      </div>
+                      <textarea
+                        value={formData.student.address}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, address: e.target.value }
+                        }))}
+                        rows={3}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
+                        placeholder="Enter your address"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        School Grade
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.student.schoolGrade}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, schoolGrade: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="e.g., Grade 10"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        School Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.student.schoolName}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, schoolName: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="Enter school name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Parent Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.student.parentName}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, parentName: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="Enter parent name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Parent Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.student.parentPhone}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          student: { ...prev.student, parentPhone: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="0771234567"
+                      />
                     </div>
                   </div>
                 </div>
@@ -550,71 +553,65 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Years of Experience
+                        Date of Birth
                       </label>
-                      <select
-                        value={formData.tutor.experience}
+                      <input
+                        type="date"
+                        value={formData.tutor.dob}
                         onChange={(e) => setFormData(prev => ({
                           ...prev,
-                          tutor: { ...prev.tutor, experience: e.target.value }
+                          tutor: { ...prev.tutor, dob: e.target.value }
                         }))}
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                      >
-                        <option value="">Select experience</option>
-                        {EXPERIENCE_OPTIONS.map(exp => (
-                          <option key={exp} value={exp}>{exp} {exp === '10+' ? '' : 'year(s)'}</option>
-                        ))}
-                      </select>
+                      />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Teaching Subjects
+                        Phone Number
                       </label>
-                      <div className="flex flex-wrap gap-2">
-                        {SUBJECTS.map(subject => (
-                          <button
-                            key={subject}
-                            type="button"
-                            onClick={() => handleSubjectToggle(subject, 'tutor')}
-                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                              formData.tutor.subjects.includes(subject)
-                                ? 'bg-green-600 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                          >
-                            {formData.tutor.subjects.includes(subject) && (
-                              <Check className="w-3 h-3 inline mr-1" />
-                            )}
-                            {subject}
-                          </button>
-                        ))}
-                      </div>
+                      <input
+                        type="tel"
+                        value={formData.tutor.phone}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          tutor: { ...prev.tutor, phone: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="0771234567"
+                      />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Education Levels You Teach
+                        Address
                       </label>
-                      <div className="flex flex-wrap gap-2">
-                        {EDUCATION_LEVELS.map(level => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => handleEducationLevelToggle(level)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all capitalize ${
-                              formData.tutor.educationLevels.includes(level)
-                                ? 'bg-purple-600 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                          >
-                            {formData.tutor.educationLevels.includes(level) && (
-                              <Check className="w-3 h-3 inline mr-1" />
-                            )}
-                            {level}
-                          </button>
-                        ))}
-                      </div>
+                      <textarea
+                        value={formData.tutor.address}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          tutor: { ...prev.tutor, address: e.target.value }
+                        }))}
+                        rows={3}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
+                        placeholder="Enter your address"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        ID Number (NIC)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.tutor.idNumber}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          tutor: { ...prev.tutor, idNumber: e.target.value }
+                        }))}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                        placeholder="123456789V or 123456789012"
+                      />
                     </div>
                   </div>
                 </div>

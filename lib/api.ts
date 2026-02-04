@@ -7,13 +7,15 @@ export interface SignupData {
   password: string
   role: 'student' | 'tutor'
   // Student-specific fields
-  educationLevel?: string
-  grade?: string
-  subjects?: string[]
-  learningMode?: string
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
   // Tutor-specific fields
-  educationLevels?: string[]
-  experience?: string
+  idNumber?: string
 }
 
 // ✅ OAuth Signup Data (no password needed)
@@ -22,13 +24,15 @@ export interface OAuthSignupData {
   email: string
   role: 'student' | 'tutor'
   // Student-specific fields
-  educationLevel?: string
-  grade?: string
-  subjects?: string[]
-  learningMode?: string
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
   // Tutor-specific fields
-  educationLevels?: string[]
-  experience?: string
+  idNumber?: string
 }
 
 export interface LoginData {
@@ -56,13 +60,15 @@ export interface AuthResponse {
 export interface AddRoleData {
   role: 'student' | 'tutor'
   // Student-specific fields
-  educationLevel?: string
-  grade?: string
-  subjects?: string[]
-  learningMode?: string
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
   // Tutor-specific fields
-  educationLevels?: string[]
-  experience?: string
+  idNumber?: string
 }
 
 // ✅ User Profile Response
@@ -77,17 +83,21 @@ export interface UserProfile {
   hasTutorProfile: boolean
   student: {
     id: string
-    educationLevel: string | null
-    grade: string | null
-    subjects: string[]
-    learningMode: string | null
+    dob: string | null
+    phone: string | null
+    address: string | null
+    schoolGrade: string | null
+    schoolName: string | null
+    parentName: string | null
+    parentPhone: string | null
     createdAt: string
   } | null
   tutor: {
     id: string
-    subjects: string[]
-    educationLevels: string[]
-    experience: string | null
+    dob: string | null
+    phone: string | null
+    address: string | null
+    idNumber: string | null
     createdAt: string
   } | null
 }
@@ -96,15 +106,19 @@ export interface UserProfile {
 export interface UpdateProfileData {
   fullName?: string
   student?: {
-    educationLevel?: string
-    grade?: string
-    subjects?: string[]
-    learningMode?: string
+    dob?: string
+    phone?: string
+    address?: string
+    schoolGrade?: string
+    schoolName?: string
+    parentName?: string
+    parentPhone?: string
   }
   tutor?: {
-    subjects?: string[]
-    educationLevels?: string[]
-    experience?: string
+    dob?: string
+    phone?: string
+    address?: string
+    idNumber?: string
   }
 }
 
@@ -226,6 +240,43 @@ class ApiClient {
   setAuthToken(token: string) {
     // This can be used for future authenticated requests
     return token
+  }
+
+  // Tutor endpoints
+  async searchTutors(params: {
+    subject?: string
+    location?: string
+    learningMode?: string
+    limit?: number
+  }): Promise<{ success: boolean; count: number; tutors: any[] }> {
+    const queryParams = new URLSearchParams()
+    if (params.subject) queryParams.append('subject', params.subject)
+    if (params.location) queryParams.append('location', params.location)
+    if (params.learningMode) queryParams.append('learningMode', params.learningMode)
+    if (params.limit) queryParams.append('limit', params.limit.toString())
+
+    return this.request(`/tutors/search?${queryParams.toString()}`, {
+      method: 'GET',
+    })
+  }
+
+  async getTutorSuggestions(query: string, limit = 10): Promise<{ success: boolean; suggestions: any[] }> {
+    const queryParams = new URLSearchParams({ query, limit: limit.toString() })
+    return this.request(`/tutors/suggestions?${queryParams.toString()}`, {
+      method: 'GET',
+    })
+  }
+
+  async getTutorById(id: string): Promise<{ success: boolean; tutor: any }> {
+    return this.request(`/tutors/${id}`, {
+      method: 'GET',
+    })
+  }
+
+  async seedMockTutors(): Promise<{ success: boolean; message: string; tutors: any[] }> {
+    return this.request('/tutors/seed', {
+      method: 'POST',
+    })
   }
 }
 

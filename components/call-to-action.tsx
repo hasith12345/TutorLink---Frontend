@@ -20,7 +20,7 @@ export function CallToAction() {
   }
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8">
+    <section className="py-20 px-4 sm:px-6 bg-white lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 p-10 md:p-16 text-center">
           {/* Background Pattern */}

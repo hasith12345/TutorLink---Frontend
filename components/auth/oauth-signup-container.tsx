@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
-import { ArrowLeft, GraduationCap, BookOpen, MapPin, X, Clock, UserCheck } from "lucide-react"
+import { ArrowLeft, GraduationCap, Calendar, Phone, MapPin, User, School, CreditCard, UserCheck } from "lucide-react"
 import { api, authStorage } from "@/lib/api"
 
 /**
@@ -252,63 +252,56 @@ function StudentProfileForm({ onBack, onSuccess, oauthData }: {
   oauthData: OAuthData 
 }) {
   const [formData, setFormData] = useState({
-    educationLevel: "",
-    grade: "",
-    subjects: [] as string[],
-    learningMode: ""
+    dob: "",
+    phone: "",
+    address: "",
+    schoolGrade: "",
+    schoolName: "",
+    parentName: "",
+    parentPhone: ""
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const educationLevels = [
-    { value: "school", label: "School" },
-    { value: "ol", label: "O/L" },
-    { value: "al", label: "A/L" },
-    { value: "undergraduate", label: "Undergraduate" },
-    { value: "postgraduate", label: "Postgraduate" },
-    { value: "other", label: "Other" }
-  ]
-
   const gradeOptions = [
     "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5",
-    "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11"
+    "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11",
+    "Grade 12", "Grade 13"
   ]
-
-  const learningModes = [
-    { value: "online", label: "Online", icon: "💻" },
-    { value: "physical", label: "Physical", icon: "🏫" },
-    { value: "both", label: "Both", icon: "🔄" }
-  ]
-
-  const popularSubjects = [
-    "Math", "Physics", "Chemistry", "Biology", "ICT",
-    "English", "Science", "History", "Geography", "Accounting"
-  ]
-
-  const handleRemoveSubject = (subject: string) => {
-    setFormData(prev => ({
-      ...prev,
-      subjects: prev.subjects.filter(s => s !== subject)
-    }))
-  }
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.educationLevel) {
-      newErrors.educationLevel = "Please select your education level"
+    if (!formData.dob) {
+      newErrors.dob = "Date of birth is required"
     }
 
-    if (formData.educationLevel === "school" && !formData.grade) {
-      newErrors.grade = "Please select your grade"
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required"
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number"
     }
 
-    if (formData.subjects.length === 0) {
-      newErrors.subjects = "Please add at least one subject"
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required"
     }
 
-    if (!formData.learningMode) {
-      newErrors.learningMode = "Please select your preferred learning mode"
+    if (!formData.schoolGrade) {
+      newErrors.schoolGrade = "School grade is required"
+    }
+
+    if (!formData.schoolName.trim()) {
+      newErrors.schoolName = "School name is required"
+    }
+
+    if (!formData.parentName.trim()) {
+      newErrors.parentName = "Parent name is required"
+    }
+
+    if (!formData.parentPhone) {
+      newErrors.parentPhone = "Parent phone number is required"
+    } else if (!/^\d{10}$/.test(formData.parentPhone)) {
+      newErrors.parentPhone = "Please enter a valid 10-digit phone number"
     }
 
     setErrors(newErrors)
@@ -329,10 +322,13 @@ function StudentProfileForm({ onBack, onSuccess, oauthData }: {
         email: oauthData.email,
         fullName: oauthData.fullName,
         role: 'student',
-        educationLevel: formData.educationLevel,
-        grade: formData.grade,
-        subjects: formData.subjects,
-        learningMode: formData.learningMode,
+        dob: formData.dob,
+        phone: formData.phone,
+        address: formData.address,
+        schoolGrade: formData.schoolGrade,
+        schoolName: formData.schoolName,
+        parentName: formData.parentName,
+        parentPhone: formData.parentPhone,
       })
 
       authStorage.setToken(response.token)
@@ -399,124 +395,147 @@ function StudentProfileForm({ onBack, onSuccess, oauthData }: {
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-8 md:px-12 py-4 min-h-0" style={{ scrollBehavior: 'smooth' }}>
           <div className="space-y-6">
-            {/* Education Level */}
+            {/* Date of Birth */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <Calendar className="w-4 h-4 inline mr-2" />
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                value={formData.dob}
+                onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.dob ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.dob && (
+                <p className="mt-1 text-sm text-red-600">{errors.dob}</p>
+              )}
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <Phone className="w-4 h-4 inline mr-2" />
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="0771234567"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.phone ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Address */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <MapPin className="w-4 h-4 inline mr-2" />
+                Address
+              </label>
+              <textarea
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                placeholder="Enter your address"
+                rows={3}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none ${
+                  errors.address ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.address && (
+                <p className="mt-1 text-sm text-red-600">{errors.address}</p>
+              )}
+            </div>
+
+            {/* School Grade */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 <GraduationCap className="w-4 h-4 inline mr-2" />
-                Education Level
+                School Grade
               </label>
               <select
-                value={formData.educationLevel}
-                onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value, grade: "" })}
-                className={`w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
-                  errors.educationLevel ? "border-red-500" : "border-slate-300"
+                value={formData.schoolGrade}
+                onChange={(e) => setFormData({ ...formData, schoolGrade: e.target.value })}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.schoolGrade ? "border-red-500" : "border-slate-300"
                 }`}
               >
-                <option value="">Select your education level</option>
-                {educationLevels.map((level) => (
-                  <option key={level.value} value={level.value}>
-                    {level.label}
+                <option value="">Select your grade</option>
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade}>
+                    {grade}
                   </option>
                 ))}
               </select>
-              {errors.educationLevel && (
-                <p className="mt-1 text-sm text-red-600">{errors.educationLevel}</p>
+              {errors.schoolGrade && (
+                <p className="mt-1 text-sm text-red-600">{errors.schoolGrade}</p>
               )}
             </div>
 
-            {/* Grade Selection (only for school) */}
-            {formData.educationLevel === "school" && (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Grade
-                </label>
-                <select
-                  value={formData.grade}
-                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
-                    errors.grade ? "border-red-500" : "border-slate-300"
-                  }`}
-                >
-                  <option value="">Select your grade</option>
-                  {gradeOptions.map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}
-                    </option>
-                  ))}
-                </select>
-                {errors.grade && (
-                  <p className="mt-1 text-sm text-red-600">{errors.grade}</p>
-                )}
-              </div>
-            )}
-
-            {/* Subjects of Interest */}
+            {/* School Name */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-3">
-                <BookOpen className="w-4 h-4 inline mr-2" />
-                Subjects of Interest
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <School className="w-4 h-4 inline mr-2" />
+                School Name
               </label>
-              
-              <div className="flex flex-wrap gap-2">
-                {popularSubjects.map((subject) => (
-                  <button
-                    key={subject}
-                    type="button"
-                    onClick={() => {
-                      if (formData.subjects.includes(subject)) {
-                        handleRemoveSubject(subject)
-                      } else {
-                        setFormData(prev => ({
-                          ...prev,
-                          subjects: [...prev.subjects, subject]
-                        }))
-                        setErrors(prev => ({ ...prev, subjects: "" }))
-                      }
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                      formData.subjects.includes(subject)
-                        ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {subject}
-                    {formData.subjects.includes(subject) && (
-                      <X className="w-3 h-3" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {errors.subjects && (
-                <p className="mt-2 text-sm text-red-600">{errors.subjects}</p>
+              <input
+                type="text"
+                value={formData.schoolName}
+                onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
+                placeholder="Enter your school name"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.schoolName ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.schoolName && (
+                <p className="mt-1 text-sm text-red-600">{errors.schoolName}</p>
               )}
             </div>
 
-            {/* Preferred Learning Mode */}
+            {/* Parent Name */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-3">
-                <MapPin className="w-4 h-4 inline mr-2" />
-                Preferred Learning Mode
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <User className="w-4 h-4 inline mr-2" />
+                Parent/Guardian Name
               </label>
-              <div className="grid grid-cols-3 gap-3">
-                {learningModes.map((mode) => (
-                  <button
-                    key={mode.value}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, learningMode: mode.value })}
-                    className={`p-4 border-2 rounded-lg text-center transition-all ${
-                      formData.learningMode === mode.value
-                        ? "border-indigo-500 bg-indigo-50"
-                        : "border-slate-300 hover:border-slate-400"
-                    }`}
-                  >
-                    <div className="text-2xl mb-2">{mode.icon}</div>
-                    <div className="text-sm font-medium text-slate-700">{mode.label}</div>
-                  </button>
-                ))}
-              </div>
-              {errors.learningMode && (
-                <p className="mt-1 text-sm text-red-600">{errors.learningMode}</p>
+              <input
+                type="text"
+                value={formData.parentName}
+                onChange={(e) => setFormData({ ...formData, parentName: e.target.value })}
+                placeholder="Enter parent/guardian name"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.parentName ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.parentName && (
+                <p className="mt-1 text-sm text-red-600">{errors.parentName}</p>
+              )}
+            </div>
+
+            {/* Parent Phone */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <Phone className="w-4 h-4 inline mr-2" />
+                Parent/Guardian Phone Number
+              </label>
+              <input
+                type="tel"
+                value={formData.parentPhone}
+                onChange={(e) => setFormData({ ...formData, parentPhone: e.target.value })}
+                placeholder="0771234567"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${
+                  errors.parentPhone ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.parentPhone && (
+                <p className="mt-1 text-sm text-red-600">{errors.parentPhone}</p>
               )}
             </div>
 
@@ -551,63 +570,35 @@ function TutorProfileForm({ onBack, onSuccess, oauthData }: {
   oauthData: OAuthData 
 }) {
   const [formData, setFormData] = useState({
-    subjects: [] as string[],
-    educationLevels: [] as string[],
-    yearsExperience: ""
+    dob: "",
+    phone: "",
+    address: "",
+    idNumber: ""
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const experienceOptions = [
-    { value: "0-1", label: "0-1 year" },
-    { value: "1-3", label: "1-3 years" },
-    { value: "3-5", label: "3-5 years" },
-    { value: "5+", label: "5+ years" }
-  ]
-
-  const educationLevelOptions = [
-    { value: "primary", label: "Primary" },
-    { value: "secondary", label: "Secondary" },
-    { value: "al", label: "A/L" },
-    { value: "undergraduate", label: "Undergraduate" }
-  ]
-
-  const popularSubjects = [
-    "Math", "Physics", "Chemistry", "Biology", "ICT",
-    "English", "Science", "Sinhala", "History", "Geography",
-    "Accounting", "Business Studies", "Economics", "Tamil"
-  ]
-
-  const handleRemoveSubject = (subject: string) => {
-    setFormData(prev => ({
-      ...prev,
-      subjects: prev.subjects.filter(s => s !== subject)
-    }))
-  }
-
-  const handleToggleEducationLevel = (level: string) => {
-    setFormData(prev => ({
-      ...prev,
-      educationLevels: prev.educationLevels.includes(level)
-        ? prev.educationLevels.filter(l => l !== level)
-        : [...prev.educationLevels, level]
-    }))
-    setErrors(prev => ({ ...prev, educationLevels: "" }))
-  }
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (formData.subjects.length === 0) {
-      newErrors.subjects = "Please add at least one subject you can teach"
+    if (!formData.dob) {
+      newErrors.dob = "Date of birth is required"
     }
 
-    if (formData.educationLevels.length === 0) {
-      newErrors.educationLevels = "Please select at least one education level"
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required"
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number"
     }
 
-    if (!formData.yearsExperience) {
-      newErrors.yearsExperience = "Please select your years of experience"
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required"
+    }
+
+    if (!formData.idNumber) {
+      newErrors.idNumber = "National ID/NIC number is required"
+    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.idNumber)) {
+      newErrors.idNumber = "Please enter a valid NIC number (e.g., 123456789V or 200012345678)"
     }
 
     setErrors(newErrors)
@@ -628,9 +619,10 @@ function TutorProfileForm({ onBack, onSuccess, oauthData }: {
         email: oauthData.email,
         fullName: oauthData.fullName,
         role: 'tutor',
-        subjects: formData.subjects,
-        educationLevels: formData.educationLevels,
-        experience: formData.yearsExperience,
+        dob: formData.dob,
+        phone: formData.phone,
+        address: formData.address,
+        idNumber: formData.idNumber,
       })
 
       authStorage.setToken(response.token)
@@ -697,100 +689,82 @@ function TutorProfileForm({ onBack, onSuccess, oauthData }: {
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-8 md:px-12 py-4 min-h-0" style={{ scrollBehavior: 'smooth' }}>
           <div className="space-y-6">
-            {/* Subjects You Teach */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-3">
-                <BookOpen className="w-4 h-4 inline mr-2" />
-                Subjects You Teach
-              </label>
-              
-              <div className="flex flex-wrap gap-2">
-                {popularSubjects.map((subject) => (
-                  <button
-                    key={subject}
-                    type="button"
-                    onClick={() => {
-                      if (formData.subjects.includes(subject)) {
-                        handleRemoveSubject(subject)
-                      } else {
-                        setFormData(prev => ({
-                          ...prev,
-                          subjects: [...prev.subjects, subject]
-                        }))
-                        setErrors(prev => ({ ...prev, subjects: "" }))
-                      }
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                      formData.subjects.includes(subject)
-                        ? "bg-purple-600 text-white hover:bg-purple-700"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {subject}
-                    {formData.subjects.includes(subject) && (
-                      <X className="w-3 h-3" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {errors.subjects && (
-                <p className="mt-2 text-sm text-red-600">{errors.subjects}</p>
-              )}
-            </div>
-
-            {/* Education Level You Teach */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-3">
-                <GraduationCap className="w-4 h-4 inline mr-2" />
-                Education Level You Teach
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {educationLevelOptions.map((level) => (
-                  <button
-                    key={level.value}
-                    type="button"
-                    onClick={() => handleToggleEducationLevel(level.value)}
-                    className={`p-4 border-2 rounded-lg text-center transition-all ${
-                      formData.educationLevels.includes(level.value)
-                        ? "border-purple-500 bg-purple-50 text-purple-700"
-                        : "border-slate-300 text-slate-700 hover:border-slate-400"
-                    }`}
-                  >
-                    <div className="text-sm font-medium">{level.label}</div>
-                  </button>
-                ))}
-              </div>
-              {errors.educationLevels && (
-                <p className="mt-1 text-sm text-red-600">{errors.educationLevels}</p>
-              )}
-            </div>
-
-            {/* Years of Tutoring Experience */}
+            {/* Date of Birth */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                <Clock className="w-4 h-4 inline mr-2" />
-                Years of Tutoring Experience
+                <Calendar className="w-4 h-4 inline mr-2" />
+                Date of Birth
               </label>
-              <select
-                value={formData.yearsExperience}
-                onChange={(e) => {
-                  setFormData({ ...formData, yearsExperience: e.target.value })
-                  setErrors(prev => ({ ...prev, yearsExperience: "" }))
-                }}
-                className={`w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all ${
-                  errors.yearsExperience ? "border-red-500" : "border-slate-300"
+              <input
+                type="date"
+                value={formData.dob}
+                onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all ${
+                  errors.dob ? "border-red-500" : "border-slate-300"
                 }`}
-              >
-                <option value="">Select your experience</option>
-                {experienceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.yearsExperience && (
-                <p className="mt-1 text-sm text-red-600">{errors.yearsExperience}</p>
+              />
+              {errors.dob && (
+                <p className="mt-1 text-sm text-red-600">{errors.dob}</p>
+              )}
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <Phone className="w-4 h-4 inline mr-2" />
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="0771234567"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all ${
+                  errors.phone ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Address */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <MapPin className="w-4 h-4 inline mr-2" />
+                Address
+              </label>
+              <textarea
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                placeholder="Enter your address"
+                rows={3}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all resize-none ${
+                  errors.address ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.address && (
+                <p className="mt-1 text-sm text-red-600">{errors.address}</p>
+              )}
+            </div>
+
+            {/* National ID/NIC */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                <CreditCard className="w-4 h-4 inline mr-2" />
+                National ID/NIC Number
+              </label>
+              <input
+                type="text"
+                value={formData.idNumber}
+                onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
+                placeholder="123456789V or 200012345678"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all ${
+                  errors.idNumber ? "border-red-500" : "border-slate-300"
+                }`}
+              />
+              {errors.idNumber && (
+                <p className="mt-1 text-sm text-red-600">{errors.idNumber}</p>
               )}
             </div>
 
