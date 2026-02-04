@@ -104,23 +104,27 @@ export default function BecomeTutorPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white">
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
+      <section className="relative overflow-hidden text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/background2.png)' }}
+        />
+        <div className="absolute inset-0" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 lg:pt-16 lg:pb-25">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="text-center lg:text-left space-y-6">
-              <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm px-4 py-2 text-sm font-medium">
+              <Badge className="bg-indigo-200 text-indigo-800 border-0 backdrop-blur-sm px-4 py-2 text-sm font-medium">
                 <MapPin className="w-4 h-4 mr-2 inline" />
                 Trusted by tutors across Sri Lanka
               </Badge>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl md:text-5xl text-black lg:text-6xl font-bold leading-tight">
                 Earn by teaching students across{" "}<br />
-                <span className="text-yellow-300">Sri Lanka</span>
+                <span className="text-indigo-500">Sri Lanka</span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-blue-100 max-w-2xl">
+              <p className="text-xl md:text-2xl text-gray-500 max-w-2xl">
                 Teach OL, AL, university subjects, or skills online from home.
               </p>
 
@@ -128,7 +132,7 @@ export default function BecomeTutorPage() {
                 <Button
                   size="lg"
                   onClick={() => router.push('/register')}
-                  className="bg-white text-indigo-600 hover:bg-gray-100 text-lg px-8 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold"
+                  className="bg-indigo-500 text-white hover:bg-indigo-600 text-lg px-8 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold"
                 >
                   Start Teaching Today
                   <ArrowRight className="ml-2 w-5 h-5" />
@@ -138,7 +142,7 @@ export default function BecomeTutorPage() {
                   size="lg"
                   variant="outline"
                   onClick={() => router.push('/search')}
-                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600 text-lg px-8 py-6 rounded-xl font-semibold transition-all duration-300"
+                  className="bg-transparent border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white text-lg px-8 py-6 rounded-xl font-semibold transition-all duration-300"
                 >
                   See Tutor Profiles
                 </Button>
@@ -147,26 +151,26 @@ export default function BecomeTutorPage() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
                 <div>
-                  <div className="text-3xl font-bold text-yellow-300">500+</div>
-                  <div className="text-sm text-blue-100">Active Tutors</div>
+                  <div className="text-3xl font-bold text-indigo-500">500+</div>
+                  <div className="text-sm text-indigo-400">Active Tutors</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-yellow-300">10k+</div>
-                  <div className="text-sm text-blue-100">Students</div>
+                  <div className="text-3xl font-bold text-indigo-500">10k+</div>
+                  <div className="text-sm text-indigo-400">Students</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-yellow-300">4.8★</div>
-                  <div className="text-sm text-blue-100">Rating</div>
+                  <div className="text-3xl font-bold text-indigo-500">4.8★</div>
+                  <div className="text-sm text-indigo-400">Rating</div>
                 </div>
               </div>
             </div>
 
-            {/* Right Image/Illustration */}
+            {/* Right Image/Illustration
             <div className="hidden lg:block">
               <div className="border relative rounded-4xl overflow-hidden">
                 <img src="/become-tutor.jpg" alt="Become a Tutor" />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
