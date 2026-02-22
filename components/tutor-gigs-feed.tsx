@@ -127,8 +127,8 @@ export function TutorGigsFeed() {
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Available Tutors</h2>
-          <p className="text-gray-600 text-lg">Browse our community of qualified tutors ready to help you succeed</p>
+          <h2 className="text-5xl md:text-4xl fo text-gray-900 mb-2 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>Available Tutors</h2>
+          <p className="text-5xl md:text-2xl fo text-gray-400 mb-2 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>Browse our community of qualified tutors ready to help you succeed</p>
         </div>
 
         {/* Gigs Grid */}

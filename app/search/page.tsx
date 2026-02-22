@@ -228,10 +228,10 @@ export default function SearchPage() {
 
         {/* Airbnb-Style Search Bar */}
         <div className="mb-8">
-          <h1 className="text-5xl md:text-5xl font-bold text-gray-900 mb-2 text-center">
+          <h1 className="text-5xl md:text-6xl fo text-gray-900 mb-2 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>
             Find Your Perfect Tutor
           </h1>
-          <p className="text-gray-600 text-center mb-6">
+          <p className="text-5xl md:text-2xl fo text-gray-400 mb-2 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>
             Search by subject, tutor name, or location
           </p>
 

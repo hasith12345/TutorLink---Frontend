@@ -60,7 +60,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white backdrop-blur-md ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 gap-6">
           {/* Logo */}
@@ -114,7 +114,7 @@ export function Navbar() {
                 <Button
                   onClick={() => router.push('/search')}
                   variant="ghost"
-                  className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 font-medium"
+                  className="text-1xl md:text-1xl fo text-gray-800 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}
                 >
                   <UserSearch className="w-4 h-4 mr-2" />
                   Find a Tutor
@@ -125,7 +125,7 @@ export function Navbar() {
                   <Button
                     onClick={() => router.push('/become-tutor')}
                     variant="ghost"
-                    className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 font-medium"
+                    className="text-1xl md:text-1xl fo text-gray-800 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}
                   >
                     <GraduationCap className="w-4 h-4 mr-2" />
                     Become a Tutor
@@ -204,7 +204,7 @@ export function Navbar() {
                 <Button
                   onClick={() => router.push('/search')}
                   variant="ghost"
-                  className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 font-medium"
+                  className="text-1xl md:text-1xl fo text-gray-700 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}
                 >
                   <UserSearch className="w-4 h-4 mr-2" />
                   Find a Tutor
@@ -214,7 +214,7 @@ export function Navbar() {
                 <Button
                   onClick={() => router.push('/become-tutor')}
                   variant="ghost"
-                  className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 font-medium"
+                  className="text-1xl md:text-1xl fo text-gray-700 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}
                 >
                   <GraduationCap className="w-4 h-4 mr-2" />
                   Become a Tutor

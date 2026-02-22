@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Rocket, Pencil, Atom } from "lucide-react"
 import Image from "next/image"
@@ -46,7 +48,7 @@ export function HeroSection() {
       <div className="absolute top-1/4 left-1/4 text-yellow-300 text-4xl opacity-70">★</div>
       <div className="absolute top-1/2 right-1/4 text-yellow-300 text-4xl opacity-70">★</div>
       <div className="absolute bottom-1/5 left-1/3 text-yellow-400 text-4xl opacity-70">★</div>
-      <div className="absolute bottom-1/4 right-1/3 text-yellow-300 text-4xl opacity-70">★</div>
+      <div className="absolute bottom-1/7 right-1/3 text-yellow-300 text-4xl opacity-70">★</div>
 
       {/* Left Student */}
       <div className="absolute bottom-0 md:left-[-40px] lg:left-[-80px] z-10 w-96 md:w-[450px] lg:w-[600px]">
@@ -81,8 +83,8 @@ export function HeroSection() {
       {/* Main Content */}
       <div className="z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full pt-28 pb-10">
         <p
-          className="text-2xl md:text-3xl mb-4 text-white/90"
-          style={{ fontFamily: "Comic Sans MS, cursive" }}
+          className="text-3xl md:text-3xl fo text-white  text-center" style={{ fontFamily: 'var(--font-bitcount-grid-double)' }}
+          
         >
           Smart way to learn
         </p>
@@ -93,21 +95,26 @@ export function HeroSection() {
           Learning
         </h1>
 
-        <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        <p className="text-5xl md:text-2xl fo text-white mb-8 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>
+          <span>TutorLink connects students and tutors through a secure, smart platform </span><br />
+          <span>for easy class discovery, enrollment, and learning access.</span> 
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <Button
-            size="lg"
-            className="bg-white hover:bg-gray-100 text-indigo-600 text-base font-semibold px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 uppercase tracking-wide"
-          >
-            REGISTER
-          </Button>
+          
+            <Button
+              size="lg"
+              className="bg-white hover:bg-gray-100 text-indigo-600 text-base font-semibold px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 uppercase tracking-wide">
+              <a href="/register">
+              REGISTER
+              </a>
+            </Button>
+          
 
           <Button
             size="lg"
             variant="outline"
+            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600 transition-all duration-300 text-base font-semibold px-10 py-6 rounded-full uppercase tracking-wide"
           >
             READ MORE
