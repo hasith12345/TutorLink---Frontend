@@ -6,22 +6,22 @@ import Image from "next/image"
 
 export function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 overflow-hidden min-h-[90vh] flex pt-8">
+    <section className="relative bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 overflow-hidden min-h-[100vh] flex pt-8 -mt-20">
       
       {/* Decorative Elements */}
-      <div className="absolute top-10 left-16 opacity-20 z-0">
+      <div className="absolute top-32 left-16 opacity-20 z-0">
         <Atom className="w-20 h-20 text-white" strokeWidth={1.5} />
       </div>
 
-      <div className="absolute top-22 left-46 z-0 opacity-80">
+      <div className="absolute top-42 left-46 z-0 opacity-80">
         <Rocket className="w-28 h-28 text-yellow-300" fill="#FDE047" strokeWidth={1.5} />
       </div>
 
-      <div className="absolute top-26 right-45 z-0 opacity-80">
+      <div className="absolute top-46 right-45 z-0 opacity-80">
         <Pencil className="w-24 h-24 text-yellow-300" fill="#FDE047" strokeWidth={1.5} />
       </div>
 
-      <div className="absolute top-14 right-20 opacity-20 z-0">
+      <div className="absolute top-32 right-20 opacity-20 z-0">
         <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <circle cx="12" cy="13" r="8" strokeWidth="1.5" />
           <path d="M12 5c1-2 3-2 3-2" strokeWidth="1.5" />
@@ -81,7 +81,7 @@ export function HeroSection() {
       </div>
 
       {/* Main Content */}
-      <div className="z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full pt-28 pb-10">
+      <div className="z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full pt-44 pb-10">
         <p
           className="text-3xl md:text-3xl fo text-white  text-center" style={{ fontFamily: 'var(--font-bitcount-grid-double)' }}
           

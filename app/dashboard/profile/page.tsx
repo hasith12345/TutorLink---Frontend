@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
-import { ArrowLeft, User, Mail, Calendar, Edit, GraduationCap, BookOpen, Loader2, X } from "lucide-react"
+import { ArrowLeft, User, Mail, Calendar, Edit, GraduationCap, BookOpen, Loader2, X, Camera } from "lucide-react"
 import { api, authStorage, UserProfile, UpdateProfileData } from "@/lib/api"
 
 export default function ProfilePage() {
@@ -11,6 +11,8 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [uploadingTutorAvatar, setUploadingTutorAvatar] = useState(false)
   
   // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -93,6 +95,78 @@ export default function ProfilePage() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be less than 5MB')
+      return
+    }
+
+    setUploadingAvatar(true)
+    try {
+      const result = await api.uploadStudentAvatar(file)
+      // Update profile state with new avatar
+      setProfile(prev => prev ? {
+        ...prev,
+        student: prev.student ? { ...prev.student, avatar: result.imageUrl } : prev.student
+      } : prev)
+
+      // Update localStorage so navbar and other components get the new avatar
+      const currentUser = authStorage.getUser()
+      if (currentUser) {
+        authStorage.setUser({ ...currentUser, avatar: result.imageUrl })
+      }
+      // Notify other components (e.g. navbar) that user data changed
+      window.dispatchEvent(new Event('userDataUpdated'))
+    } catch (err) {
+      console.error('Avatar upload failed:', err)
+      alert(err instanceof Error ? err.message : 'Failed to upload avatar')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
+  const handleTutorAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be less than 5MB')
+      return
+    }
+
+    setUploadingTutorAvatar(true)
+    try {
+      const result = await api.uploadTutorAvatar(file)
+      setProfile(prev => prev ? {
+        ...prev,
+        tutor: prev.tutor ? { ...prev.tutor, avatar: result.imageUrl } : prev.tutor
+      } : prev)
+
+      const currentUser = authStorage.getUser()
+      if (currentUser) {
+        authStorage.setUser({ ...currentUser, avatar: result.imageUrl })
+      }
+      window.dispatchEvent(new Event('userDataUpdated'))
+    } catch (err) {
+      console.error('Tutor avatar upload failed:', err)
+      alert(err instanceof Error ? err.message : 'Failed to upload avatar')
+    } finally {
+      setUploadingTutorAvatar(false)
+    }
   }
 
   const openEditModal = () => {
@@ -214,8 +288,36 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-6">
           <div className="flex items-center space-x-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-              {getInitials(profile.fullName)}
+            <div className="relative group">
+              {(profile.student?.avatar || profile.tutor?.avatar) ? (
+                <img
+                  src={profile.student?.avatar || profile.tutor?.avatar || ''}
+                  alt={profile.fullName}
+                  className="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  {getInitials(profile.fullName)}
+                </div>
+              )}
+              {(profile.hasStudentProfile || profile.hasTutorProfile) && (
+                <label className={`absolute inset-0 flex items-center justify-center bg-black/40 rounded-full transition-opacity cursor-pointer ${
+                  (uploadingAvatar || uploadingTutorAvatar) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}>
+                  {(uploadingAvatar || uploadingTutorAvatar) ? (
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-6 h-6 text-white" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={profile.hasStudentProfile ? handleAvatarUpload : handleTutorAvatarUpload}
+                    disabled={uploadingAvatar || uploadingTutorAvatar}
+                  />
+                </label>
+              )}
             </div>
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-slate-800">{profile.fullName}</h1>
@@ -249,7 +351,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-6">
           <h2 className="text-xl font-bold text-slate-800 mb-6">Profile Information</h2>
           
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex items-start space-x-4">
               <User className="w-5 h-5 text-slate-400 mt-0.5" />
               <div className="flex-1">
@@ -287,53 +389,53 @@ export default function ProfilePage() {
               <h2 className="text-xl font-bold text-slate-800">Student Profile</h2>
             </div>
             
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {profile.student.dob && (
                 <div>
                   <p className="text-sm text-slate-500">Date of Birth</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.dob}</p>
                 </div>
               )}
-              
+
               {profile.student.phone && (
                 <div>
                   <p className="text-sm text-slate-500">Phone Number</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.phone}</p>
                 </div>
               )}
-              
-              {profile.student.address && (
-                <div>
-                  <p className="text-sm text-slate-500">Address</p>
-                  <p className="text-base text-slate-800 font-medium">{profile.student.address}</p>
-                </div>
-              )}
-              
+
               {profile.student.schoolGrade && (
                 <div>
                   <p className="text-sm text-slate-500">School Grade</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.schoolGrade}</p>
                 </div>
               )}
-              
+
               {profile.student.schoolName && (
                 <div>
                   <p className="text-sm text-slate-500">School Name</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.schoolName}</p>
                 </div>
               )}
-              
+
               {profile.student.parentName && (
                 <div>
                   <p className="text-sm text-slate-500">Parent Name</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.parentName}</p>
                 </div>
               )}
-              
+
               {profile.student.parentPhone && (
                 <div>
                   <p className="text-sm text-slate-500">Parent Phone</p>
                   <p className="text-base text-slate-800 font-medium">{profile.student.parentPhone}</p>
+                </div>
+              )}
+
+              {profile.student.address && (
+                <div className="sm:col-span-2">
+                  <p className="text-sm text-slate-500">Address</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.student.address}</p>
                 </div>
               )}
             </div>
@@ -348,32 +450,32 @@ export default function ProfilePage() {
               <h2 className="text-xl font-bold text-slate-800">Tutor Profile</h2>
             </div>
             
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {profile.tutor.dob && (
                 <div>
                   <p className="text-sm text-slate-500">Date of Birth</p>
                   <p className="text-base text-slate-800 font-medium">{profile.tutor.dob}</p>
                 </div>
               )}
-              
+
               {profile.tutor.phone && (
                 <div>
                   <p className="text-sm text-slate-500">Phone Number</p>
                   <p className="text-base text-slate-800 font-medium">{profile.tutor.phone}</p>
                 </div>
               )}
-              
-              {profile.tutor.address && (
-                <div>
-                  <p className="text-sm text-slate-500">Address</p>
-                  <p className="text-base text-slate-800 font-medium">{profile.tutor.address}</p>
-                </div>
-              )}
-              
+
               {profile.tutor.idNumber && (
                 <div>
                   <p className="text-sm text-slate-500">ID Number</p>
                   <p className="text-base text-slate-800 font-medium">{profile.tutor.idNumber}</p>
+                </div>
+              )}
+
+              {profile.tutor.address && (
+                <div className="sm:col-span-2">
+                  <p className="text-sm text-slate-500">Address</p>
+                  <p className="text-base text-slate-800 font-medium">{profile.tutor.address}</p>
                 </div>
               )}
             </div>
@@ -384,9 +486,9 @@ export default function ProfilePage() {
       {/* Edit Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            {/* Modal Header — sticky, never scrolls */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-200 flex-shrink-0">
               <h3 className="text-xl font-bold text-slate-800">Edit Profile</h3>
               <button
                 onClick={closeEditModal}
@@ -396,8 +498,8 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 space-y-8">
+            {/* Modal Body — only this part scrolls */}
+            <div className="p-6 space-y-8 overflow-y-auto flex-1">
               {saveError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                   {saveError}
@@ -618,8 +720,8 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200">
+            {/* Modal Footer — sticky, never scrolls */}
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200 flex-shrink-0">
               <button
                 onClick={closeEditModal}
                 className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"

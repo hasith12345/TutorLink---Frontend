@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image"
 import { Calendar, Upload, Users2, Globe } from "lucide-react"
 
 const benefits = [
@@ -57,25 +57,13 @@ export function TutorBenefits() {
           </div>
 
           <div className="relative">
-            <Card className="bg-white rounded-3xl shadow-2xl border-0 overflow-hidden">
-              <CardContent className="p-0">
-                <img src="/online-tutor-teaching-students-video-call-educatio.jpg" alt="Tutor teaching online" className="w-full h-auto" />
-              </CardContent>
-            </Card>
-            {/* Floating Stats Card */}
-            <Card className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl border-0">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                    <TrendingUpIcon className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">+40%</p>
-                    <p className="text-gray-500 text-sm">Avg. Student Growth</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <Image
+              src="/for-tutors.png"
+              alt="For Tutors"
+              width={450}
+              height={450}
+              className="ml-14 object-contain"
+            />
           </div>
         </div>
       </div>

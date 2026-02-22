@@ -30,10 +30,10 @@ export function CallToAction() {
           </div>
 
           <div className="relative">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-balance">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight drop-shadow-lg">
               Start Learning or Teaching with TutorLink
             </h2>
-            <p className="text-white/90 text-lg mb-8 max-w-xl mx-auto">
+            <p className="text-3xl md:text-1xl font-light text-white mb-8 text-center" style={{ fontFamily: 'var(--font-delicious-handrawn)' }}>
               Join our growing community of students and tutors today. It only takes a few minutes to get started.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

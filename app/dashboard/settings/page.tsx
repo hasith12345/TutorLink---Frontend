@@ -82,7 +82,9 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-4">
-            <button className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
+            <button
+              onClick={() => router.push('/dashboard/settings/change-password')}
+              className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
               <p className="font-medium text-slate-800">Change Password</p>
               <p className="text-sm text-slate-500 mt-1">Update your account password</p>
             </button>

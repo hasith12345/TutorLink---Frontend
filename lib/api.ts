@@ -90,6 +90,7 @@ export interface UserProfile {
     schoolName: string | null
     parentName: string | null
     parentPhone: string | null
+    avatar: string | null
     createdAt: string
   } | null
   tutor: {
@@ -98,6 +99,7 @@ export interface UserProfile {
     phone: string | null
     address: string | null
     idNumber: string | null
+    avatar: string | null
     createdAt: string
   } | null
 }
@@ -236,6 +238,62 @@ class ApiClient {
     })
   }
 
+  // ✅ Upload Student Avatar (authenticated)
+  async uploadStudentAvatar(file: File): Promise<{ message: string; imageUrl: string }> {
+    const token = authStorage.getToken()
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const url = `${this.baseUrl}/upload/student-avatar`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `Upload failed: ${response.status}`)
+    }
+    return data
+  }
+
+  // ✅ Upload Tutor Avatar (authenticated)
+  async uploadTutorAvatar(file: File): Promise<{ message: string; imageUrl: string }> {
+    const token = authStorage.getToken()
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const url = `${this.baseUrl}/upload/tutor-avatar`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `Upload failed: ${response.status}`)
+    }
+    return data
+  }
+
+  // ✅ Change Password (authenticated)
+  async changePassword(currentPassword: string, newPassword: string): Promise<{ message: string }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/change-password', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    })
+  }
+
   // Add token to requests for authenticated endpoints
   setAuthToken(token: string) {
     // This can be used for future authenticated requests
@@ -298,13 +356,13 @@ export const authStorage = {
   },
 
   // ✅ Store user info with role flags
-  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean }) {
+  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null }) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(user))
     }
   },
 
-  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean } | null {
+  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null } | null {
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem('user')
       return user ? JSON.parse(user) : null
