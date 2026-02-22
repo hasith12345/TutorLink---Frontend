@@ -35,7 +35,7 @@ export default function HowTutorLinkWorks() {
     <section id="how-it-works" className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <h2 className="text-4xl font-bold text-gray-900 mb-12">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-800 mb-6 leading-tight drop-shadow-lg">
           How TutorLink works:
         </h2>
 

@@ -294,6 +294,18 @@ class ApiClient {
     })
   }
 
+  // ✅ Set Password for OAuth users (no current password needed)
+  async setPassword(newPassword: string): Promise<{ message: string }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/set-password', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ newPassword }),
+    })
+  }
+
   // Add token to requests for authenticated endpoints
   setAuthToken(token: string) {
     // This can be used for future authenticated requests
@@ -336,6 +348,20 @@ class ApiClient {
       method: 'POST',
     })
   }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    })
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    return this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    })
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL)
@@ -356,13 +382,13 @@ export const authStorage = {
   },
 
   // ✅ Store user info with role flags
-  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null }) {
+  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null; isOAuthUser?: boolean }) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(user))
     }
   },
 
-  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null } | null {
+  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null; isOAuthUser?: boolean } | null {
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem('user')
       return user ? JSON.parse(user) : null

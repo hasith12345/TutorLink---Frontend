@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { ArrowLeft, Lock, Eye, EyeOff, Loader2, CheckCircle2, XCircle } from "lucide-react"
@@ -52,6 +52,9 @@ function Rule({ met, label }: { met: boolean; label: string }) {
 
 export default function ChangePasswordPage() {
   const router = useRouter()
+  // Capture at mount — stays true even after we flip isOAuthUser to false on success
+  const wasOAuthUser = useRef(authStorage.getUser()?.isOAuthUser ?? false)
+  const isOAuthUser = wasOAuthUser.current
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -77,6 +80,10 @@ export default function ChangePasswordPage() {
       router.push("/login")
       return
     }
+    if (!isOAuthUser && !currentPassword) {
+      setError("Current password is required.")
+      return
+    }
     if (!allRulesMet) {
       setError("New password does not meet the requirements.")
       return
@@ -88,7 +95,14 @@ export default function ChangePasswordPage() {
 
     setLoading(true)
     try {
-      await api.changePassword(currentPassword, newPassword)
+      if (isOAuthUser) {
+        await api.setPassword(newPassword)
+        // After setting, they're no longer OAuth-only — update stored user
+        const user = authStorage.getUser()
+        if (user) authStorage.setUser({ ...user, isOAuthUser: false })
+      } else {
+        await api.changePassword(currentPassword, newPassword)
+      }
       setSuccess(true)
       setCurrentPassword("")
       setNewPassword("")
@@ -121,8 +135,12 @@ export default function ChangePasswordPage() {
               <Lock className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-800">Change Password</h1>
-              <p className="text-sm text-slate-500">Update your account password securely</p>
+              <h1 className="text-xl font-bold text-slate-800">{isOAuthUser ? "Set Password" : "Change Password"}</h1>
+              <p className="text-sm text-slate-500">
+                {isOAuthUser
+                  ? "Create a password to also log in with your email"
+                  : "Update your account password securely"}
+              </p>
             </div>
           </div>
 
@@ -131,8 +149,14 @@ export default function ChangePasswordPage() {
             <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
               <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-green-800">Password changed successfully!</p>
-                <p className="text-xs text-green-700 mt-0.5">Your new password is now active.</p>
+                <p className="text-sm font-semibold text-green-800">
+                  {isOAuthUser ? "Password set successfully!" : "Password changed successfully!"}
+                </p>
+                <p className="text-xs text-green-700 mt-0.5">
+                  {isOAuthUser
+                    ? "You can now log in with your email and new password."
+                    : "Your new password is now active."}
+                </p>
               </div>
             </div>
           )}
@@ -146,12 +170,14 @@ export default function ChangePasswordPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <PasswordInput
-              label="Current Password"
-              value={currentPassword}
-              onChange={setCurrentPassword}
-              placeholder="Enter your current password"
-            />
+            {!isOAuthUser && (
+              <PasswordInput
+                label="Current Password"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                placeholder="Enter your current password"
+              />
+            )}
 
             <PasswordInput
               label="New Password"
@@ -191,13 +217,13 @@ export default function ChangePasswordPage() {
 
             <button
               type="submit"
-              disabled={loading || !currentPassword || !allRulesMet || !passwordsMatch}
+              disabled={loading || (!isOAuthUser && !currentPassword) || !allRulesMet || !passwordsMatch}
               className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Updating password...</>
+                <><Loader2 className="w-4 h-4 animate-spin" /> {isOAuthUser ? "Setting password..." : "Updating password..."}</>
               ) : (
-                "Update Password"
+                isOAuthUser ? "Set Password" : "Update Password"
               )}
             </button>
           </form>

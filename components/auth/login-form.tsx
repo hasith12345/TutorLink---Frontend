@@ -165,7 +165,11 @@ export function LoginForm() {
         </div>
 
         <div className="flex justify-end">
-          <button type="button" className="text-sm text-indigo-600 hover:underline">
+          <button
+            type="button"
+            onClick={() => window.location.href = '/forgot-password'}
+            className="text-sm text-indigo-600 hover:underline"
+          >
             Forgot password?
           </button>
         </div>

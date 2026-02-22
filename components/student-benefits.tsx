@@ -32,7 +32,7 @@ export function StudentBenefits() {
           <span className="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
             For Students
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-800 mb-6 leading-tight drop-shadow-lg">
             Everything You Need to Succeed
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">

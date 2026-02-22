@@ -1,14 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { ArrowLeft, Bell, Lock } from "lucide-react"
+import { api, authStorage } from "@/lib/api"
 
 export default function SettingsPage() {
   const router = useRouter()
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [pushNotifications, setPushNotifications] = useState(true)
+  const [isOAuthUser, setIsOAuthUser] = useState(authStorage.getUser()?.isOAuthUser ?? false)
+
+  // Fetch fresh profile from server so isOAuthUser is always accurate
+  useEffect(() => {
+    api.getProfile().then((profile: any) => {
+      setIsOAuthUser(profile.isOAuthUser ?? false)
+      // Keep localStorage in sync
+      const stored = authStorage.getUser()
+      if (stored) authStorage.setUser({ ...stored, isOAuthUser: profile.isOAuthUser ?? false })
+    }).catch(() => {/* silently ignore */})
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -85,8 +97,12 @@ export default function SettingsPage() {
             <button
               onClick={() => router.push('/dashboard/settings/change-password')}
               className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
-              <p className="font-medium text-slate-800">Change Password</p>
-              <p className="text-sm text-slate-500 mt-1">Update your account password</p>
+              <p className="font-medium text-slate-800">{isOAuthUser ? "Set Password" : "Change Password"}</p>
+              <p className="text-sm text-slate-500 mt-1">
+                {isOAuthUser
+                  ? "Create a password so you can also log in with email"
+                  : "Update your account password"}
+              </p>
             </button>
 
             <button className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
