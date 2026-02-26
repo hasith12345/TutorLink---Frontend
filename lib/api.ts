@@ -7,13 +7,32 @@ export interface SignupData {
   password: string
   role: 'student' | 'tutor'
   // Student-specific fields
-  educationLevel?: string
-  grade?: string
-  subjects?: string[]
-  learningMode?: string
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
   // Tutor-specific fields
-  educationLevels?: string[]
-  experience?: string
+  idNumber?: string
+}
+
+// ✅ OAuth Signup Data (no password needed)
+export interface OAuthSignupData {
+  fullName: string
+  email: string
+  role: 'student' | 'tutor'
+  // Student-specific fields
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
+  // Tutor-specific fields
+  idNumber?: string
 }
 
 export interface LoginData {
@@ -21,12 +40,88 @@ export interface LoginData {
   password: string
 }
 
+// ✅ Updated AuthResponse for new login structure
 export interface AuthResponse {
   token: string
-  role: 'student' | 'tutor'
+  role?: 'student' | 'tutor'  // For signup response
   email?: string
   isEmailVerified?: boolean
   message?: string
+  user?: {
+    id: string
+    email: string
+    fullName: string
+    hasStudentProfile: boolean
+    hasTutorProfile: boolean
+  }
+}
+
+// ✅ Add Role Data Interface
+export interface AddRoleData {
+  role: 'student' | 'tutor'
+  // Student-specific fields
+  dob?: string
+  phone?: string
+  address?: string
+  schoolGrade?: string
+  schoolName?: string
+  parentName?: string
+  parentPhone?: string
+  // Tutor-specific fields
+  idNumber?: string
+}
+
+// ✅ User Profile Response
+export interface UserProfile {
+  id: string
+  fullName: string
+  email: string
+  isEmailVerified: boolean
+  createdAt: string
+  updatedAt: string
+  hasStudentProfile: boolean
+  hasTutorProfile: boolean
+  student: {
+    id: string
+    dob: string | null
+    phone: string | null
+    address: string | null
+    schoolGrade: string | null
+    schoolName: string | null
+    parentName: string | null
+    parentPhone: string | null
+    avatar: string | null
+    createdAt: string
+  } | null
+  tutor: {
+    id: string
+    dob: string | null
+    phone: string | null
+    address: string | null
+    idNumber: string | null
+    avatar: string | null
+    createdAt: string
+  } | null
+}
+
+// ✅ Update Profile Request Data
+export interface UpdateProfileData {
+  fullName?: string
+  student?: {
+    dob?: string
+    phone?: string
+    address?: string
+    schoolGrade?: string
+    schoolName?: string
+    parentName?: string
+    parentPhone?: string
+  }
+  tutor?: {
+    dob?: string
+    phone?: string
+    address?: string
+    idNumber?: string
+  }
 }
 
 export interface ApiError {
@@ -79,6 +174,14 @@ class ApiClient {
     })
   }
 
+  // ✅ OAuth Signup - Creates account for OAuth users with profile
+  async oauthSignup(data: OAuthSignupData): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/oauth/signup', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async login(data: LoginData): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/login', {
       method: 'POST',
@@ -100,16 +203,170 @@ class ApiClient {
     })
   }
 
+  // ✅ Add Role endpoint (authenticated)
+  async addRole(data: AddRoleData): Promise<{ message: string; hasStudentProfile: boolean; hasTutorProfile: boolean }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/add-role', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ✅ Get User Profile (authenticated)
+  async getProfile(): Promise<UserProfile> {
+    const token = authStorage.getToken()
+    return this.request<UserProfile>('/auth/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    })
+  }
+
+  // ✅ Update User Profile (authenticated)
+  async updateProfile(data: UpdateProfileData): Promise<{ message: string; profile: UserProfile }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/profile', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ✅ Upload Student Avatar (authenticated)
+  async uploadStudentAvatar(file: File): Promise<{ message: string; imageUrl: string }> {
+    const token = authStorage.getToken()
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const url = `${this.baseUrl}/upload/student-avatar`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `Upload failed: ${response.status}`)
+    }
+    return data
+  }
+
+  // ✅ Upload Tutor Avatar (authenticated)
+  async uploadTutorAvatar(file: File): Promise<{ message: string; imageUrl: string }> {
+    const token = authStorage.getToken()
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const url = `${this.baseUrl}/upload/tutor-avatar`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `Upload failed: ${response.status}`)
+    }
+    return data
+  }
+
+  // ✅ Change Password (authenticated)
+  async changePassword(currentPassword: string, newPassword: string): Promise<{ message: string }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/change-password', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    })
+  }
+
+  // ✅ Set Password for OAuth users (no current password needed)
+  async setPassword(newPassword: string): Promise<{ message: string }> {
+    const token = authStorage.getToken()
+    return this.request('/auth/set-password', {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ newPassword }),
+    })
+  }
+
   // Add token to requests for authenticated endpoints
   setAuthToken(token: string) {
     // This can be used for future authenticated requests
     return token
   }
+
+  // Tutor endpoints
+  async searchTutors(params: {
+    subject?: string
+    location?: string
+    learningMode?: string
+    limit?: number
+  }): Promise<{ success: boolean; count: number; tutors: any[] }> {
+    const queryParams = new URLSearchParams()
+    if (params.subject) queryParams.append('subject', params.subject)
+    if (params.location) queryParams.append('location', params.location)
+    if (params.learningMode) queryParams.append('learningMode', params.learningMode)
+    if (params.limit) queryParams.append('limit', params.limit.toString())
+
+    return this.request(`/tutors/search?${queryParams.toString()}`, {
+      method: 'GET',
+    })
+  }
+
+  async getTutorSuggestions(query: string, limit = 10): Promise<{ success: boolean; suggestions: any[] }> {
+    const queryParams = new URLSearchParams({ query, limit: limit.toString() })
+    return this.request(`/tutors/suggestions?${queryParams.toString()}`, {
+      method: 'GET',
+    })
+  }
+
+  async getTutorById(id: string): Promise<{ success: boolean; tutor: any }> {
+    return this.request(`/tutors/${id}`, {
+      method: 'GET',
+    })
+  }
+
+  async seedMockTutors(): Promise<{ success: boolean; message: string; tutors: any[] }> {
+    return this.request('/tutors/seed', {
+      method: 'POST',
+    })
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    })
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    return this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    })
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL)
 
-// Helper functions for auth storage
+// ✅ Updated helper functions for auth storage
 export const authStorage = {
   setToken(token: string) {
     if (typeof window !== 'undefined') {
@@ -124,6 +381,36 @@ export const authStorage = {
     return null
   },
 
+  // ✅ Store user info with role flags
+  setUser(user: { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null; isOAuthUser?: boolean }) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user))
+    }
+  },
+
+  getUser(): { id: string; email: string; fullName: string; hasStudentProfile: boolean; hasTutorProfile: boolean; avatar?: string | null; isOAuthUser?: boolean } | null {
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem('user')
+      return user ? JSON.parse(user) : null
+    }
+    return null
+  },
+
+  // ✅ Store active role (for users with both roles)
+  setActiveRole(role: 'student' | 'tutor') {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('activeRole', role)
+    }
+  },
+
+  getActiveRole(): 'student' | 'tutor' | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeRole') as 'student' | 'tutor' | null
+    }
+    return null
+  },
+
+  // Legacy - kept for backward compatibility during signup
   setRole(role: string) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('role', role)
@@ -141,7 +428,14 @@ export const authStorage = {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token')
       localStorage.removeItem('role')
+      localStorage.removeItem('user')
+      localStorage.removeItem('activeRole')
     }
+  },
+
+  // Alias for clear (used in some components)
+  clearAuth() {
+    this.clear()
   },
 
   isAuthenticated(): boolean {
